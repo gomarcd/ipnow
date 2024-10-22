@@ -29,10 +29,7 @@ export default {
 	  }
   	  
 		// Return plain text to curl requests and send Cronitor heartbeat
-		if (userAgent.includes("curl") || acceptHeader.includes("text/plain")) {
-		await fetch('https://cronitor.link/p/2edb4ea21a214627819de8324b8522d9/my-ip-fail', {
-			method: 'GET',
-		});			
+		if (userAgent.includes("curl") || acceptHeader.includes("text/plain")) {		
 		return new Response(`${ip}\n`, {
 			headers: { "Content-Type": "text/plain" }
 		});
