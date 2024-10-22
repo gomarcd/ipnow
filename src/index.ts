@@ -94,7 +94,7 @@ export default {
 					bottom: 20px;
 					right: 20px;
 					display: flex;
-					gap: 15px;
+					gap: 10px;
 				}
 
 				.social-links {
