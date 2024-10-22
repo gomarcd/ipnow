@@ -7,10 +7,12 @@ So there you have it, yet *another* "What is my IP" site.
 ## Usage
 
 **Browser**:
+
 Simply head over to [myip.fail](https://myip.fail) to see your IP, click or tap anywhere on the card to copy the IP to clipboard.
 
 **Terminal**:
-Just do:
+
+Using myip.fail from a terminal is easy:
 
 ```
 curl myip.fail
