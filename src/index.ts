@@ -1,7 +1,16 @@
 export default {
 	async fetch(request, env, ctx): Promise<Response> {
-	  const ip = request.headers.get("cf-connecting-ip") || "IP not available";
-  
+		const ip = request.headers.get("cf-connecting-ip") || "IP not available";
+		const { headers } = request;
+		const userAgent = headers.get("user-agent") || "";
+		const acceptHeader = headers.get("accept") || "";
+
+	// Check if the request comes from curl or prefers plain text
+	if (userAgent.includes("curl") || acceptHeader.includes("text/plain")) {
+	return new Response(`${ip}\n`, {
+		headers: { "Content-Type": "text/plain" },
+	});
+	}
 	  const html = `
 		<!DOCTYPE html>
 		<html lang="en">
@@ -9,108 +18,108 @@ export default {
 			<meta charset="UTF-8">
 			<meta name="viewport" content="width=device-width, initial-scale=1.0">
 			<title>My IP Fail</title>
-<style>
-    body { 
-        background-color: #f4f4f4;
-        color: #000;
-        font-family: Arial, sans-serif;
-        display: flex;
-        justify-content: center;
-    }
-    h1 { font-size: 24px; }
-    .ip {
-        overflow-wrap: break-word;
-        word-wrap: break-word;
-        cursor: pointer;
-        background-color: white;
-        padding: 30px;
-        margin-top: 45px;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        text-align: center;
-        width: 280px;
-    }
-    .notification {
-        display: none;
-        background-color: #4CAF50;
-        color: white;
-        padding: 10px;
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        z-index: 1000;
-        border-radius: 5px;
-    }
-    
-    svg {
-        cursor: pointer;
-        padding: 4px;
-        border-radius: 5px;
-        width: 18px;
-        height: 18px;
-        vertical-align: -4px;
-        transition: transform 0.1s ease, fill 0.1s ease;
-    }
+			<style>
+				body { 
+					background-color: #f4f4f4;
+					color: #000;
+					font-family: Arial, sans-serif;
+					display: flex;
+					justify-content: center;
+				}
+				h1 { font-size: 24px; }
+				.ip {
+					overflow-wrap: break-word;
+					word-wrap: break-word;
+					cursor: pointer;
+					background-color: white;
+					padding: 30px;
+					margin-top: 45px;
+					border-radius: 10px;
+					box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+					text-align: center;
+					width: 280px;
+				}
+				.notification {
+					display: none;
+					background-color: #4CAF50;
+					color: white;
+					padding: 10px;
+					position: fixed;
+					bottom: 20px;
+					right: 20px;
+					z-index: 1000;
+					border-radius: 5px;
+				}
+				
+				svg {
+					cursor: pointer;
+					padding: 4px;
+					border-radius: 5px;
+					width: 18px;
+					height: 18px;
+					vertical-align: -4px;
+					transition: transform 0.1s ease, fill 0.1s ease;
+				}
 
-    /* Apply hover effects only on devices that support hover (desktops/laptops) */
-    @media (hover: hover) {
-        .card svg:hover {
-            background-color: #e0e0e0;
-            fill: #4e5256;
-        }
+				/* Apply hover effects only on devices that support hover (desktops/laptops) */
+				@media (hover: hover) {
+					.card svg:hover {
+						background-color: #e0e0e0;
+						fill: #4e5256;
+					}
 
-        .social-links svg:hover {
-            background-color: #e0e0e0;
-        }
+					.social-links svg:hover {
+						background-color: #e0e0e0;
+					}
 
-        .card svg:active {
-            transform: scale(0.95);
-        }
-    }
+					.card svg:active {
+						transform: scale(0.95);
+					}
+				}
 
-    @media (prefers-color-scheme: dark) {
-        body {
-            background-color: #121212;
-            color: #f0f0f0;
-        }
+				@media (prefers-color-scheme: dark) {
+					body {
+						background-color: #121212;
+						color: #f0f0f0;
+					}
 
-        .ip {
-            background-color: #1e1e1e;
-            color: #f0f0f0;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
-        }
+					.ip {
+						background-color: #1e1e1e;
+						color: #f0f0f0;
+						box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
+					}
 
-        svg {
-            fill: #f0f0f0;
-        }
+					svg {
+						fill: #f0f0f0;
+					}
 
-        /* Dark mode hover effects (only for hover-enabled devices) */
-        @media (hover: hover) {
-            .card svg:hover {
-                background-color: #333;
-                fill: #ffffff;
-            }
+					/* Dark mode hover effects (only for hover-enabled devices) */
+					@media (hover: hover) {
+						.card svg:hover {
+							background-color: #333;
+							fill: #ffffff;
+						}
 
-            .social-links svg:hover {
-                background-color: #333;
-                fill: #f0f0f0;
-            }
-        }
-    }
+						.social-links svg:hover {
+							background-color: #333;
+							fill: #f0f0f0;
+						}
+					}
+				}
 
-    .social-links {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        display: flex;
-        gap: 10px;
-    }
+				.social-links {
+					position: fixed;
+					bottom: 20px;
+					right: 20px;
+					display: flex;
+					gap: 10px;
+				}
 
-    .social-links {
-        font-size: 24px;
-        text-decoration: none;
-    }
-</style>
+				.social-links {
+					font-size: 24px;
+					text-decoration: none;
+				}
+			</style>
 
 		  </head>
 		  <body>
