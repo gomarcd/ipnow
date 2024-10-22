@@ -1,4 +1,4 @@
-[![Better Stack Badge](https://uptime.betterstack.com/status-badges/v2/monitor/1m6g5.svg)](https://uptime.betterstack.com/?utm_source=status_badge)
+![Uptime Robot status](https://img.shields.io/uptimerobot/status/m797890225-f0d7c351f78a2c7bd6bae078?up_message=Online&up_color=green&down_message=Offline&down_color=red&style=flat&label=Uptime&cacheSeconds=3600)
 
 # myip.fail
 
