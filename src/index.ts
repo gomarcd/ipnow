@@ -1,39 +1,42 @@
 export default {
 	async fetch(request: Request): Promise<Response> {
-	  const { headers } = request;
-	  const ip = headers.get("cf-connecting-ip") || "IP not available";
-	  const acceptHeader = headers.get("accept") || "";
-	  const userAgent = headers.get("user-agent") || "";
-  
-	  // Parse the request URL and check for robots.txt
-	  const url = new URL(request.url);
-	  
-	  if (url.pathname === "/robots.txt") {
-		const robotsTxt = `
-	  User-agent: Googlebot
-	  Disallow: /private/
-	  Allow: /
-	  
-	  User-agent: Bingbot
-	  Disallow: /not-for-bing/
-	  Allow: /
-	  
-	  User-agent: *
-	  Disallow: /sensitive-data/
-	  Allow: /
-		`;
-		
+		const { headers } = request;
+		const ip = headers.get("cf-connecting-ip") || "IP not available";
+		const acceptHeader = headers.get("accept") || "";
+		const userAgent = headers.get("user-agent") || "";
+
+		// Parse the request URL and check for robots.txt
+		const url = new URL(request.url);
+
+		if (url.pathname === "/robots.txt") {
+			const robotsTxt = `
+		User-agent: Googlebot
+		Disallow: /private/
+		Allow: /
+
+		User-agent: Bingbot
+		Disallow: /not-for-bing/
+		Allow: /
+
+		User-agent: *
+		Disallow: /sensitive-data/
+		Allow: /
+			`;
+			
 		return new Response(robotsTxt, {
 		  headers: { "Content-Type": "text/plain" }
 		});
 	  }
-  
-	  // Handle text/plain requests (e.g., from curl)
-	  if (userAgent.includes("curl") || acceptHeader.includes("text/plain")) {
+  	  
+		// Return plain text to curl requests and send Cronitor heartbeat
+		if (userAgent.includes("curl") || acceptHeader.includes("text/plain")) {
+		await fetch('https://cronitor.link/p/2edb4ea21a214627819de8324b8522d9/my-ip-fail', {
+			method: 'GET',
+		});			
 		return new Response(`${ip}\n`, {
-		  headers: { "Content-Type": "text/plain" }
+			headers: { "Content-Type": "text/plain" }
 		});
-	  }
+		}
 
 	  const html = `
 	  <!DOCTYPE html>
