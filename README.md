@@ -12,7 +12,7 @@ Simply head over to [myip.fail](https://myip.fail) to see your IP, click or tap 
 
 **Terminal**:
 
-Using myip.fail from a terminal is easy:
+Using [myip.fail](https://myip.fail) from a terminal is easy:
 
 ```
 curl myip.fail
