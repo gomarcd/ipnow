@@ -1,4 +1,4 @@
-![Uptime Robot status](https://img.shields.io/uptimerobot/status/m797890225-f0d7c351f78a2c7bd6bae078?up_message=Online&up_color=green&down_message=Offline&down_color=red&style=flat&label=Uptime&cacheSeconds=3600)
+[![Uptime Robot status](https://img.shields.io/uptimerobot/status/m797890225-f0d7c351f78a2c7bd6bae078?up_message=Online&up_color=green&down_message=Offline&down_color=red&style=flat&label=Uptime&cacheSeconds=3600)](https://stats.uptimerobot.com/lPA6pTe42L)
 
 # myip.fail
 
