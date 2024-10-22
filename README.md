@@ -1,3 +1,5 @@
+[![Better Stack Badge](https://uptime.betterstack.com/status-badges/v2/monitor/1m6g5.svg)](https://uptime.betterstack.com/?utm_source=status_badge)
+
 # myip.fail
 
 I needed an excuse to tinker with Cloudflare Workers, and for whatever reason this was it.
