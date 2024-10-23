@@ -65,8 +65,7 @@ export default {
 						border-radius: 10px;
 						box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 						text-align: center;
-						min-width: 30%;
-						max-width: 60%;
+						max-width: 80%;
 					}
 					.notification {
 						display: none;
@@ -188,13 +187,13 @@ export default {
 		</html>
 		`;
 
-		if (request.url.startsWith('http://') && !userAgent.includes('curl')) {
+		if (request.url.startsWith('http://') && !userAgent.includes('curl') && !url.hostname.includes('localhost')) {
 			const httpsUrl = request.url.replace('http://', 'https://');
 			return Response.redirect(httpsUrl, 301);
-		}		
+		}			
 
-	  return new Response(html, {
-		headers: { "Content-Type": "text/html" }
-	  });
+		return new Response(html, {
+			headers: { "Content-Type": "text/html" }
+		});
 	}
   };

@@ -10,9 +10,13 @@ compatibility_flags = ["nodejs_compat"]
 [observability]
 enabled = true
 
-[[routes]]
-pattern = "myip.fail"
-custom_domain = true
+[env.production]
+route = "myip.fail/*"
+
+[env.dev]
+route = "localhost:8787"
+
+
 # Automatically place your workloads in an optimal location to minimize latency.
 # If you are running back-end logic in a Worker, running it closer to your back-end infrastructure
 # rather than the end user may result in better performance.
