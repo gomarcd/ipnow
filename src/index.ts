@@ -93,7 +93,7 @@ export default {
 
 					/* Apply hover effects only on devices that support hover (desktops/laptops) */
 					@media (hover: hover) {
-						.card svg:hover {
+						.ipcard svg:hover {
 							background-color: #e0e0e0;
 							fill: #4e5256;
 						}
@@ -102,7 +102,7 @@ export default {
 							background-color: #e0e0e0;
 						}
 
-						.card svg:active {
+						.ipcard svg:active {
 							transform: scale(0.95);
 						}
 					}
@@ -125,7 +125,7 @@ export default {
 
 						/* Dark mode hover effects (only for hover-enabled devices) */
 						@media (hover: hover) {
-							.card svg:hover {
+							.ipcard svg:hover {
 								background-color: #333;
 								fill: #ffffff;
 							}
