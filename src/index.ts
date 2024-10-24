@@ -134,7 +134,6 @@ export default {
 						position: absolute;
 						top: 10px;
 						right: 15px;
-						font-size: 18px;
 						cursor: pointer;
 						color: #666;
 						width: 16px;
@@ -142,8 +141,7 @@ export default {
 					}
 					.infomodalClose:hover {
 						color: #333;
-						background-color: #e0e0e0;
-						border-radius: 4px;
+
 					}
 					.social-links {
 						align-self: flex-end;
@@ -299,7 +297,7 @@ export default {
 				}
 			}
 
-			// Close modal if user clicks outside of it
+			// Close modal if user clicks outside of it (works on desktop)
 			window.onclick = function(event) {
 				const modal = document.getElementById('infomodal');
 				const modalBackground = document.getElementById('infomodalBackground');
@@ -308,7 +306,18 @@ export default {
 					toggleModal(); // Close modal if user clicks on the background
 				}
 			}
+
+			// Close modal if user taps outside of it (for mobile)
+			window.ontouchstart = function(event) {
+				const modal = document.getElementById('infomodal');
+				const modalBackground = document.getElementById('infomodalBackground');
+
+				if (event.target === modalBackground) {
+					toggleModal(); // Close modal if user taps on the background
+				}
+			}
 		</script>
+
 
 		</body>
 		</html>
