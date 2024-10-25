@@ -20,7 +20,7 @@ So there you have it, yet *another* "What is my IP" site.
 
 **Browser**:
 
-Simply head over to [myip.fail](https://myip.fail) to see your IP, click or tap anywhere on the card to copy the IP to clipboard.
+Simply head over to [myip.fail](https://myip.fail) to see your IP, click or tap the IP address to copy to clipboard.
 
 **Terminal**:
 
