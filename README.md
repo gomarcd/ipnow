@@ -6,7 +6,7 @@ I needed an excuse to tinker with Cloudflare Workers, and for whatever reason th
 
 So there you have it, yet *another* "What is my IP" site.
 
-:white_check_mark: instant access with `curl`
+:white_check_mark: Instant access with `curl`
 
 :white_check_mark: Copy to clipboard
 
