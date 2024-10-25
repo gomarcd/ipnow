@@ -3,7 +3,7 @@ export default {
 		const { headers } = request;
 		const ip = headers.get("cf-connecting-ip") || "Unknown";
 		const acceptHeader = headers.get("accept") || "";
-		const userAgent = headers.get("useÏ-agent") || "";
+		const userAgent = headers.get("user-agent") || "";
 		const cf = request.cf || {};
 		const isp = cf.asOrganization || "Unknown";
 		const asn = cf.asn || "Not available";
