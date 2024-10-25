@@ -325,6 +325,44 @@ export default {
 			        deviceSection.style.display = 'block';
 			    }
 			});
+
+			function copyToClipboard(elementId) {
+				const element = document.getElementById(elementId);
+				const textToCopy = element.textContent || element.innerText; // Handles both innerText and textContent
+				navigator.clipboard.writeText(textToCopy).then(function() {
+					const notification = document.getElementById('notification');
+					notification.style.display = 'block';
+					setTimeout(() => {
+						notification.style.display = 'none';
+					}, 3000);
+				}, function(err) {
+					alert('Failed to copy: ', err);
+				});
+			}
+			function toggleModal() {
+				const modalBackground = document.getElementById("infomodalBackground");
+				if (modalBackground.style.display === "flex") {
+					modalBackground.style.display = "none";
+				} else {
+					modalBackground.style.display = "flex";
+				}
+			}
+			// Close modal if user clicks outside of it (works on desktop)
+			window.onclick = function(event) {
+				const modal = document.getElementById('infomodal');
+				const modalBackground = document.getElementById('infomodalBackground');
+				if (event.target === modalBackground) {
+					toggleModal(); // Close modal if user clicks on the background
+				}
+			}
+			// Close modal if user taps outside of it (for mobile)
+			window.ontouchstart = function(event) {
+				const modal = document.getElementById('infomodal');
+				const modalBackground = document.getElementById('infomodalBackground');
+				if (event.target === modalBackground) {
+					toggleModal(); // Close modal if user taps on the background
+				}
+			}
 		</script>
 		</body>
 		</html>
