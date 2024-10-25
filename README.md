@@ -76,7 +76,7 @@ With that, you instantly have your public IP address copied to clipboard.
 
 # Support
 
-Support me here on GitHub or Buy Me a Coffee:
+Follow me on Twitter, support me right here on GitHub or Buy Me a Coffee! Any and all support is deeply appreciated:
 
 <div align="center">
 	<a href="https://twitter.com/gomarcd"><img src="https://img.shields.io/twitter/follow/gomarcd?style=social" alt="Follow me on Twitter" width="150"></a>&nbsp;&nbsp;&nbsp;&nbsp;
