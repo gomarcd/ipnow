@@ -62,12 +62,12 @@ With that, you instantly have your public IP address copied to clipboard.
 ## Screenshots
 
 <div align="center">
-  <img src="./curl.png" alt="Curl Screenshot" width="300">
+	<img src="./curl.png" alt="Curl Screenshot" width="700">
 </div>
 
 <div align="center">
 	<img src="./lightmode.png" alt="Light Mode Screenshot" width="300">
-  <img src="./darkmode.png" alt="Dark Mode Screenshot" width="300">  
+	<img src="./darkmode.png" alt="Dark Mode Screenshot" width="300">  
 </div>
 
 <div align="center">
