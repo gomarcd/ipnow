@@ -16,6 +16,10 @@ So there you have it, yet *another* "What is my IP" site.
 
 :white_check_mark: Device info
 
+:white_check_mark: Auto light/dark mode per system settings
+
+:white_check_mark: Webapp works seemlessly on all devices
+
 ## Usage
 
 **Browser**:
@@ -53,6 +57,9 @@ Open PowerShell and do:
 ```
 curl myip.fail | Set-Clipboard
 ```
+With that, you instantly have your public IP address copied to clipboard.
+
+## Screenshots
 
 ![Screenshot](./curl.png)
 
