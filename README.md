@@ -61,10 +61,15 @@ With that, you instantly have your public IP address copied to clipboard.
 
 ## Screenshots
 
-![Screenshot](./curl.png)
+<div align="center">
+  <img src="./curl.png" alt="Curl Screenshot" width="300">
+</div>
 
-![Screenshot](./darkmode.png)
+<div align="center">
+	<img src="./lightmode.png" alt="Light Mode Screenshot" width="300">
+  <img src="./darkmode.png" alt="Dark Mode Screenshot" width="300">  
+</div>
 
-![Screenshot](./lightmode.png)
-
-![Screenshot](./mobile.jpeg)
+<div align="center">
+	<img src="./mobile.jpeg" alt="Mobile Screenshot" width="300">
+</div>
