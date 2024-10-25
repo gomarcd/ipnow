@@ -7,10 +7,11 @@ export default {
 		const cf = request.cf || {};
 		const isp = cf.asOrganization || "Unknown";
 		const asn = cf.asn || "Not available";
-		const city = cf.city || "Not available";
-		const region = cf.region || "Not available";
-		const country = cf.country || "Not available";
-		
+		const city = cf.city;
+		const region = cf.region;
+		const country = cf.country;
+		const locationParts = [city, region, country].filter(Boolean);
+		const location = locationParts.length > 0 ? locationParts.join(', ') : null;
 
 		const url = new URL(request.url);
 		if (url.pathname === "/robots.txt") {
@@ -225,12 +226,25 @@ export default {
 					<h3>IP address</h3>
 					 <span id="ipvalue">${ip}</span> 	<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="M760-200H320q-33 0-56.5-23.5T240-280v-560q0-33 23.5-56.5T320-920h280l240 240v400q0 33-23.5 56.5T760-200ZM560-640v-200H320v560h440v-360H560ZM160-40q-33 0-56.5-23.5T80-120v-560h80v560h440v80H160Zm160-800v200-200 560-560Z"/></svg>
 					</div>
-					<h3>Provider</h3>
-					${isp} ASN${asn}
-					<h3>Location</h3>
-					${city}, ${region}, ${country}
-					<h3>Device</h3>					
-					<span id="browser-info">Loading...</span>, <span id="os-info">Loading...</span>
+
+					<!-- Display Provider info, if any -->
+					${(isp || asn) ? `
+					  <h3>Provider</h3>
+					  <p>${isp || ''} ${asn ? `ASN${asn}` : ''}</p>
+					` : ''}
+
+					<!-- Display Location info, if any -->
+					${(city || region || country) ? `
+					  <h3>Location</h3>
+					  <p>${[city, region, country].filter(Boolean).join(', ')}</p>
+					` : ''}
+
+					<!-- Display Device info, if any -->
+					<div id="device-section" style="display: none;">
+					    <h3>Device</h3>
+					    <span id="browser-info"></span>, <span id="os-info"></span>
+					</div>
+
 					<div class="footer">
 						<div class="info" onclick="toggleModal()">
 							<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
@@ -270,87 +284,48 @@ export default {
 
 		<script>
 			document.addEventListener('DOMContentLoaded', () => {
-			const osInfoElement = document.getElementById('os-info');
-			const browserInfoElement = document.getElementById('browser-info');
+			    const osInfoElement = document.getElementById('os-info');
+			    const browserInfoElement = document.getElementById('browser-info');
+			    const deviceSection = document.getElementById('device-section');
 
-			let platform = "Unknown platform";
-			let browser = "Unknown browser";
+			    let platform = "Unknown platform";
+			    let browser = "Unknown browser";
 
-			if (navigator.userAgentData) {
-				platform = navigator.userAgentData.platform || platform;
-				browser = navigator.userAgentData.brands?.[0]?.brand || browser;
-			} else {
-				const userAgent = navigator.userAgent;
-				if (userAgent.includes("Chrome")) {
-				browser = "Chrome";
-				} else if (userAgent.includes("Safari") && !userAgent.includes("Chrome")) {
-				browser = "Safari";
-				} else if (userAgent.includes("Firefox")) {
-				browser = "Firefox";
-				} else if (userAgent.includes("Edge")) {
-				browser = "Edge";
-				}
-				if (/iPad|iPhone|iPod/.test(userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) {
-				platform = "iOS";
-				} else if (userAgent.includes("Mac")) {
-				platform = "macOS";
-				} else if (userAgent.includes("Win")) {
-				platform = "Windows";
-				} else if (userAgent.includes("Linux")) {
-				platform = "Linux";
-				}
-			}
+			    if (navigator.userAgentData) {
+			        platform = navigator.userAgentData.platform || platform;
+			        browser = navigator.userAgentData.brands?.[0]?.brand || browser;
+			    } else {
+			        const userAgent = navigator.userAgent;
+			        if (userAgent.includes("Chrome")) {
+			            browser = "Chrome";
+			        } else if (userAgent.includes("Safari") && !userAgent.includes("Chrome")) {
+			            browser = "Safari";
+			        } else if (userAgent.includes("Firefox")) {
+			            browser = "Firefox";
+			        } else if (userAgent.includes("Edge")) {
+			            browser = "Edge";
+			        }
+			        if (/iPad|iPhone|iPod/.test(userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) {
+			            platform = "iOS";
+			        } else if (userAgent.includes("Mac")) {
+			            platform = "macOS";
+			        } else if (userAgent.includes("Win")) {
+			            platform = "Windows";
+			        } else if (userAgent.includes("Linux")) {
+			            platform = "Linux";
+			        }
+			    }
 
-			osInfoElement.textContent = platform;
-			browserInfoElement.textContent = browser;
+			    // Set the content of the spans
+			    osInfoElement.textContent = platform;
+			    browserInfoElement.textContent = browser;
+
+			    // Display the Device section only if we have valid information
+			    if (platform !== "Unknown platform" || browser !== "Unknown browser") {
+			        deviceSection.style.display = 'block';
+			    }
 			});
-
-
-			function copyToClipboard(elementId) {
-				const element = document.getElementById(elementId);
-				const textToCopy = element.textContent || element.innerText; // Handles both innerText and textContent
-				navigator.clipboard.writeText(textToCopy).then(function() {
-					const notification = document.getElementById('notification');
-					notification.style.display = 'block';
-					setTimeout(() => {
-						notification.style.display = 'none';
-					}, 3000);
-				}, function(err) {
-					alert('Failed to copy: ', err);
-				});
-			}
-
-			function toggleModal() {
-				const modalBackground = document.getElementById("infomodalBackground");
-				if (modalBackground.style.display === "flex") {
-					modalBackground.style.display = "none";
-				} else {
-					modalBackground.style.display = "flex";
-				}
-			}
-
-			// Close modal if user clicks outside of it (works on desktop)
-			window.onclick = function(event) {
-				const modal = document.getElementById('infomodal');
-				const modalBackground = document.getElementById('infomodalBackground');
-
-				if (event.target === modalBackground) {
-					toggleModal(); // Close modal if user clicks on the background
-				}
-			}
-
-			// Close modal if user taps outside of it (for mobile)
-			window.ontouchstart = function(event) {
-				const modal = document.getElementById('infomodal');
-				const modalBackground = document.getElementById('infomodalBackground');
-
-				if (event.target === modalBackground) {
-					toggleModal(); // Close modal if user taps on the background
-				}
-			}
 		</script>
-
-
 		</body>
 		</html>
 		`;
