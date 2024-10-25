@@ -73,3 +73,16 @@ With that, you instantly have your public IP address copied to clipboard.
 <div align="center">
 	<img src="./mobile.jpeg" alt="Mobile Screenshot" width="300">
 </div>
+
+# Support
+
+Support me here on GitHub or Buy Me a Coffee:
+
+<div align="center">
+  <a href="https://github.com/sponsors/gomarcd">
+    <img src="https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86" alt="Sponsor me on GitHub" width="150">
+  </a>&nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="https://www.buymeacoffee.com/gomarcd">
+    <img src="https://www.buymeacoffee.com/assets/img/custom_images/yellow_img.png" alt="Buy Me A Coffee" width="150">
+  </a>
+</div>
