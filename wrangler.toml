@@ -1,5 +1,5 @@
 #:schema node_modules/wrangler/config-schema.json
-name = "myipfail"
+name = "ipnow"
 main = "src/index.ts"
 compatibility_date = "2024-10-18"
 compatibility_flags = ["nodejs_compat"]
@@ -11,7 +11,7 @@ compatibility_flags = ["nodejs_compat"]
 enabled = true
 
 [env.production]
-route = "myip.fail/*"
+route = "ip.now/*"
 
 [env.dev]
 route = "localhost:8787"
