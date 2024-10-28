@@ -32,20 +32,31 @@ export default {
 		});
 		}
 
+		const array = new Uint8Array(16);
+		crypto.getRandomValues(array);
+		const nonce = btoa(String.fromCharCode(...array));	  
+
 		const html = `
 		<!DOCTYPE html>
 		<html lang="en">
-		<head>
-			<script defer data-domain="ip.now" src="https://plausible.io/js/script.js"></script>
-			<meta charset="UTF-8">
-			<meta name="viewport" content="width=device-width, initial-scale=1.0">
-			<meta name="description" content="Quickly find your public IP address using ip.now. Instantly see and copy your IP with no extra steps!" />
-			<meta name="keywords" content="What is my IP, IP address lookup, find my IP address, check my IP, IP location" />				
-			<title>Instant IP Lookup | ip.now</title>
-			<link rel="preconnect" href="https://fonts.googleapis.com">
-			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-			<link href="https://fonts.googleapis.com/css2?family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
-				<style>
+			<head>
+				<script async defer data-domain="ip.now" src="https://plausible.io/js/script.js"></script>
+				<meta charset="UTF-8">
+				<meta name="viewport" content="width=device-width, initial-scale=1.0">
+				<meta name="description" content="Quickly find your public IP address using ip.now. Instantly see and copy your IP with no extra steps!" />
+				<meta name="keywords" content="What is my IP, IP address lookup, find my IP address, check my IP, IP location" />
+				<title>Instant IP Lookup | ip.now</title>
+				
+				<!-- Preconnect and preload fonts to improve loading -->
+				<link rel="preconnect" href="https://fonts.googleapis.com">
+				<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+				<link rel="preload" id="fontPreload" href="https://fonts.googleapis.com/css2?family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" as="style">
+				<noscript>
+					<link href="https://fonts.googleapis.com/css2?family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+				</noscript>
+			</head>
+
+				<style nonce="${nonce}">
 					body { 
 						background-color: #f4f4f4;
 						color: #2D2D2D;
@@ -55,6 +66,10 @@ export default {
 						width: 100%;
 						border: none;
 						margin: 0;
+					}
+
+					.hidden {
+						display: none;
 					}
 
 					h1 { 
@@ -222,9 +237,9 @@ export default {
 		<body>
 			<div class="container">
 				<div class="ipcard">
-					<div onclick="copyToClipboard('ipvalue')" class="ip" id="ip">
-					<h3>IP address</h3>
-					 <span id="ipvalue">${ip}</span> 	<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="M760-200H320q-33 0-56.5-23.5T240-280v-560q0-33 23.5-56.5T320-920h280l240 240v400q0 33-23.5 56.5T760-200ZM560-640v-200H320v560h440v-360H560ZM160-40q-33 0-56.5-23.5T80-120v-560h80v560h440v80H160Zm160-800v200-200 560-560Z"/></svg>
+					<div class="ip" id="ip">
+						<h3>IP address</h3>
+						<span id="ipvalue">${ip}</span> 	<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="M760-200H320q-33 0-56.5-23.5T240-280v-560q0-33 23.5-56.5T320-920h280l240 240v400q0 33-23.5 56.5T760-200ZM560-640v-200H320v560h440v-360H560ZM160-40q-33 0-56.5-23.5T80-120v-560h80v560h440v80H160Zm160-800v200-200 560-560Z"/></svg>
 					</div>
 
 					<!-- Display Provider info, if any -->
@@ -240,13 +255,13 @@ export default {
 					` : ''}
 
 					<!-- Display Device info, if any -->
-					<div id="device-section" style="display: none;">
+					<div id="device-section" class="hidden">
 					    <h3>Device</h3>
 					    <span id="browser-info"></span>, <span id="os-info"></span>
 					</div>
 
 					<div class="footer">
-						<div class="info" onclick="toggleModal()">
+						<div class="info" id="infobutton">
 							<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
 						</div>
 
@@ -269,21 +284,43 @@ export default {
 
 				<div class="infomodalBackground" id="infomodalBackground">
 					<div class="infomodal" id="infomodal">
-						<div class="infomodalClose" onclick="toggleModal()">
+						<div class="infomodalClose" id="closeModal">
 							<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
 						</div>
 						<h3>When does this matter?</h3>
 						<p>When you need to confirm your public IP.</p>
 						<p>Use from any terminal:</p>
-						<div onclick="copyToClipboard('curltext')">
+						<div id="curltext">
 							<p><span id="curltext"><b>curl ip.now</b></span> <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="M760-200H320q-33 0-56.5-23.5T240-280v-560q0-33 23.5-56.5T320-920h280l240 240v400q0 33-23.5 56.5T760-200ZM560-640v-200H320v560h440v-360H560ZM160-40q-33 0-56.5-23.5T80-120v-560h80v560h440v80H160Zm160-800v200-200 560-560Z"/></svg></p>
 						</div>
 					</div>
 				</div>				
 			</div>			
 
-		<script>
+		<script nonce="${nonce}">
 			document.addEventListener('DOMContentLoaded', () => {
+				const infoButton = document.getElementById('infobutton');
+				infoButton.addEventListener('click', toggleModal);
+
+				const closeModal = document.getElementById('closeModal');
+				closeModal.addEventListener('click', toggleModal);
+				
+				const fontLink = document.getElementById('fontPreload');
+				fontLink.onload = function () {
+					this.onload = null;
+					this.rel = 'stylesheet';
+				}
+
+				const ipElement = document.getElementById('ip');
+					ipElement.addEventListener('click', () => {
+						copyToClipboard('ipvalue');
+				});
+
+				const curltext = document.getElementById('curltext');
+					curltext.addEventListener('click', () => {
+						copyToClipboard('curltext');
+				});
+
 			    const osInfoElement = document.getElementById('os-info');
 			    const browserInfoElement = document.getElementById('browser-info');
 			    const deviceSection = document.getElementById('device-section');
@@ -316,19 +353,17 @@ export default {
 			        }
 			    }
 
-			    // Set the content of the spans
 			    osInfoElement.textContent = platform;
 			    browserInfoElement.textContent = browser;
 
-			    // Display the Device section only if we have valid information
 			    if (platform !== "Unknown platform" || browser !== "Unknown browser") {
-			        deviceSection.style.display = 'block';
+					deviceSection.classList.remove('hidden');
 			    }
 			});
 
 			function copyToClipboard(elementId) {
 				const element = document.getElementById(elementId);
-				const textToCopy = element.textContent || element.innerText; // Handles both innerText and textContent
+				const textToCopy = element.textContent || element.innerText;
 				navigator.clipboard.writeText(textToCopy).then(function() {
 					const notification = document.getElementById('notification');
 					notification.style.display = 'block';
@@ -352,7 +387,7 @@ export default {
 				const modal = document.getElementById('infomodal');
 				const modalBackground = document.getElementById('infomodalBackground');
 				if (event.target === modalBackground) {
-					toggleModal(); // Close modal if user clicks on the background
+					toggleModal();
 				}
 			}
 			// Close modal if user taps outside of it (for mobile)
@@ -360,7 +395,7 @@ export default {
 				const modal = document.getElementById('infomodal');
 				const modalBackground = document.getElementById('infomodalBackground');
 				if (event.target === modalBackground) {
-					toggleModal(); // Close modal if user taps on the background
+					toggleModal();
 				}
 			}
 		</script>
@@ -374,7 +409,10 @@ export default {
 		}			
 
 		return new Response(html, {
-			headers: { "Content-Type": "text/html" }
+			headers: { 
+				"Content-Type": "text/html",
+				"Content-Security-Policy": `default-src 'self'; script-src 'self' 'nonce-${nonce}' https://plausible.io; style-src 'self' 'nonce-${nonce}' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self'; connect-src 'self' https://plausible.io;`
+			}
 		});
 	}
   };
