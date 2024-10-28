@@ -70,10 +70,6 @@ With that, you instantly have your public IP address copied to clipboard.
 	<img src="./darkmode.png" alt="Dark Mode Screenshot" width="300">  
 </div>
 
-<div align="center">
-	<img src="./mobile.jpeg" alt="Mobile Screenshot" width="300">
-</div>
-
 # Support
 
 Follow me on Twitter, support me right here on GitHub or Buy Me a Coffee! Any and all support is deeply appreciated:
