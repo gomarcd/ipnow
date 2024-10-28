@@ -14,7 +14,7 @@ enabled = true
 route = "ip.now/*"
 
 [env.dev]
-route = "localhost:8787"
+route = "localhost:8789"
 
 
 # Automatically place your workloads in an optimal location to minimize latency.
