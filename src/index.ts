@@ -36,12 +36,12 @@ export default {
 		<!DOCTYPE html>
 		<html lang="en">
 		<head>
-			<script defer data-domain="myip.fail" src="https://plausible.io/js/script.js"></script>
+			<script defer data-domain="ip.now" src="https://plausible.io/js/script.js"></script>
 			<meta charset="UTF-8">
 			<meta name="viewport" content="width=device-width, initial-scale=1.0">
-			<meta name="description" content="Quickly find your public IP address using myip.fail. Instantly see and copy your IP with no extra steps!" />
+			<meta name="description" content="Quickly find your public IP address using ip.now. Instantly see and copy your IP with no extra steps!" />
 			<meta name="keywords" content="What is my IP, IP address lookup, find my IP address, check my IP, IP location" />				
-			<title>Instant IP Lookup | myip.fail</title>
+			<title>Instant IP Lookup | ip.now</title>
 			<link rel="preconnect" href="https://fonts.googleapis.com">
 			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 			<link href="https://fonts.googleapis.com/css2?family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
@@ -276,7 +276,7 @@ export default {
 						<p>When you need to confirm your public IP.</p>
 						<p>Use from any terminal:</p>
 						<div onclick="copyToClipboard('curltext')">
-							<p><span id="curltext"><b>curl myip.fail</b></span> <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="M760-200H320q-33 0-56.5-23.5T240-280v-560q0-33 23.5-56.5T320-920h280l240 240v400q0 33-23.5 56.5T760-200ZM560-640v-200H320v560h440v-360H560ZM160-40q-33 0-56.5-23.5T80-120v-560h80v560h440v80H160Zm160-800v200-200 560-560Z"/></svg></p>
+							<p><span id="curltext"><b>curl ip.now</b></span> <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="M760-200H320q-33 0-56.5-23.5T240-280v-560q0-33 23.5-56.5T320-920h280l240 240v400q0 33-23.5 56.5T760-200ZM560-640v-200H320v560h440v-360H560ZM160-40q-33 0-56.5-23.5T80-120v-560h80v560h440v80H160Zm160-800v200-200 560-560Z"/></svg></p>
 						</div>
 					</div>
 				</div>				
