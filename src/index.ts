@@ -46,18 +46,17 @@ export default {
 				<meta name="description" content="Quickly find your public IP address using ip.now. Instantly see and copy your IP with no extra steps!" />
 				<meta name="keywords" content="What is my IP, IP address lookup, find my IP address, check my IP, IP location" />
 				<title>Instant IP Lookup | ip.now</title>
-				
-				<!-- Preconnect and preload fonts to improve loading -->
-				<link rel="preconnect" href="https://fonts.googleapis.com">
-				<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-				<link rel="preload" id="fontPreload" href="https://fonts.googleapis.com/css2?family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" as="style">
-				<noscript>
-					<link href="https://fonts.googleapis.com/css2?family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
-				</noscript>
 			</head>
 
-				<style nonce="${nonce}">
-					body { 
+				<style nonce="${nonce}">	
+					body {
+						@font-face {
+							font-family: 'Ubuntu';
+							src: url('https://fonts.gstatic.com/s/ubuntu/v15/4iCv6KVjbNBYlgoCjC3jsGyN.woff2') format('woff2');
+							font-weight: 400;
+							font-style: normal;
+							font-display: swap;
+						}
 						background-color: #f4f4f4;
 						color: #2D2D2D;
 						font-family: 'Ubuntu Mono', monospace;
@@ -304,12 +303,6 @@ export default {
 
 				const closeModal = document.getElementById('closeModal');
 				closeModal.addEventListener('click', toggleModal);
-				
-				const fontLink = document.getElementById('fontPreload');
-				fontLink.onload = function () {
-					this.onload = null;
-					this.rel = 'stylesheet';
-				}
 
 				const ipElement = document.getElementById('ip');
 					ipElement.addEventListener('click', () => {
