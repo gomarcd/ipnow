@@ -12,7 +12,7 @@ So there you have it, yet *another* "What is my IP" site.
 
 :white_check_mark: Provider, location & device info
 
-:white_check_mark: /details endpoint for JSON output
+:white_check_mark: /details endpoint for JSON output with more advanced details
 
 :white_check_mark: Auto light/dark mode per system settings
 
