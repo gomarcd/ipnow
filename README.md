@@ -57,6 +57,13 @@ curl ip.now | Set-Clipboard
 ```
 With that, you instantly have your public IP address copied to clipboard.
 
+You can do the same with the /details endpoint to get more info:
+
+```
+curl ip.now/details
+```
+See our screenshots below and give it a try!
+
 ## Screenshots
 
 <div align="center">
