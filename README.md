@@ -68,16 +68,22 @@ With that, you instantly have your public IP address copied to clipboard.
 	<img src="./darkmode.png" alt="Dark Mode Screenshot" width="300">  
 </div>
 
-# Support
+# Support & Communities
 
-Follow me on Twitter, support me right here on GitHub or Buy Me a Coffee! Any and all support is deeply appreciated:
+Provide feedback or submit feature requests on our subreddit!
+
+Follow me on Twitter, support me right here on GitHub, or Buy Me a Coffee!
+
+Any and all support is deeply appreciated:
 
 <div align="center">
-	<a href="https://twitter.com/gomarcd"><img src="https://img.shields.io/twitter/follow/gomarcd?style=social" alt="Follow me on Twitter" width="150"></a>&nbsp;&nbsp;&nbsp;&nbsp;
-  <a href="https://github.com/sponsors/gomarcd">
-    <img src="https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86" alt="Sponsor me on GitHub" width="150">
-  </a>&nbsp;&nbsp;&nbsp;&nbsp;
-  <a href="https://www.buymeacoffee.com/gomarcd">
-    <img src="https://www.buymeacoffee.com/assets/img/custom_images/yellow_img.png" alt="Buy Me A Coffee" width="150">
-  </a>
+
+[<img src="https://img.shields.io/twitter/follow/gomarcd?style=social" alt="Follow on Twitter" height="30" style="vertical-align: middle;">](https://twitter.com/gomarcd)
+&nbsp;&nbsp;&nbsp;&nbsp;
+[<img src="https://img.shields.io/reddit/subreddit-subscribers/ipnow?label=r%2Fipnow&labelColor=FF4500&color=FF4500&logoColor=ffffff&style=for-the-badge&logo=reddit" alt="Join r/ipnow on Reddit" height="30" style="vertical-align: middle;">](https://www.reddit.com/r/ipnow/)
+&nbsp;&nbsp;&nbsp;&nbsp;
+[<img src="https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86" alt="Sponsor on GitHub" height="30" style="vertical-align: middle;">](https://github.com/sponsors/gomarcd)
+&nbsp;&nbsp;&nbsp;&nbsp;
+[<img src="https://www.buymeacoffee.com/assets/img/custom_images/yellow_img.png" alt="Buy Me a Coffee" height="30" style="vertical-align: middle;">](https://www.buymeacoffee.com/gomarcd)
+&nbsp;&nbsp;&nbsp;&nbsp;
 </div>
