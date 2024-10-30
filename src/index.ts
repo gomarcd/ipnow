@@ -10,10 +10,18 @@ export default {
 		const city = cf.city;
 		const region = cf.region;
 		const country = cf.country;
-		const locationParts = [city, region, country].filter(Boolean);
+		const postalcode = cf.postalCode;
+		const latitude = cf.latitude;
+		const longitude = cf.longitude;
+		const datacenter = cf.colo;
+		const timezone = cf.timezone;
+		const locationParts = [city, region, country, postalcode].filter(Boolean);
 		const location = locationParts.length > 0 ? locationParts.join(', ') : null;
 
 		const url = new URL(request.url);
+
+		const details = { ip, isp, asn, location, latitude, longitude, datacenter, userAgent, timezone };
+
 		if (url.pathname === "/robots.txt") {
 			const robotsTxt = `
 		User-agent: *
@@ -24,7 +32,13 @@ export default {
 			headers: { "Content-Type": "text/plain" }
 		});
 		}
-  	  
+		
+		if (url.pathname === "/details") {
+		return new Response(JSON.stringify(details, null, 2) + "\n", {
+		    headers: { "Content-Type": "application/json" },
+		  });
+		}
+
 		// Return plain text to curl requests
 		if (userAgent.includes("curl") || acceptHeader.includes("text/plain")) {		
 		return new Response(`${ip}\n`, {
@@ -67,6 +81,42 @@ export default {
 						margin: 0;
 					}
 
+					.detailsCodeBlock {
+						border: none;
+						border-radius: 5px;
+						padding-top: 20px;
+						padding-bottom: 25px;
+						padding-left: 25px;
+						padding-right: 25px;
+						white-space: pre-wrap;
+						overflow-x: auto;
+						font-family: 'Ubuntu Mono', monospace;
+						font-size: 0.9em;
+						width: 60vw;
+						display: flex;
+						flex-direction: column;
+						align-self: center;
+					    backdrop-filter: blur(6px);
+					    background-color: rgba(255, 255, 255, 0.8);
+					    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+					}
+
+					.copyDetailsHeader {
+						display: flex;
+						justify-content: space-between;
+						align-items: center;
+						margin-bottom: 15px;
+					}
+
+					.copyDetailsButton {
+						display: flex;
+						align-self: flex-end;
+					}
+
+					.detailsJson {
+						display: none;
+					}
+
 					.hidden {
 						display: none;
 					}
@@ -83,6 +133,10 @@ export default {
 
 					.ip {
 						cursor: pointer;
+					}
+
+					.dimmed {
+						color: #6c757d;
 					}
 
 					.ipcard {
@@ -126,14 +180,14 @@ export default {
 					.infomodal {
 						display: flex;
 						flex-direction: column;
+						padding-left: 35px;
+						padding-right: 35px;
+						padding-top: 20px;
+						padding-bottom: 35px;
 						position: relative;
 						background-color: white;
 						border-radius: 8px;
-						padding-top: 15px;
-						padding-bottom: 20px;
-						padding-left: 35px;
-						padding-right: 35px;
-						max-width: 50vw;
+						max-width: 40vw;
 						box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 					}
 
@@ -203,7 +257,10 @@ export default {
 							background-color: #121212;
 							color: #e9ecef;
 						}
-						
+						pre {
+							background-color: #2a2a2a;
+							color: #e9ecef;
+						}
 						h1, h3 {
 							color: #e9ecef;
 						}
@@ -212,7 +269,13 @@ export default {
 							background-color: #1e1e1e;
 							box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
 						}
-							
+						.detailsCodeBlock {
+							border: 1px solid #6c757d;
+						    backdrop-filter: blur(6px);
+						    background-color: rgba(0, 0, 0, 0.5);
+						    box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);							
+						}
+
 						svg {
 							fill: #6c757d;
 						}
@@ -238,7 +301,7 @@ export default {
 				<div class="ipcard">
 					<div class="ip" id="ip">
 						<h3>IP address</h3>
-						<span id="ipvalue">${ip}</span> 	<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="M760-200H320q-33 0-56.5-23.5T240-280v-560q0-33 23.5-56.5T320-920h280l240 240v400q0 33-23.5 56.5T760-200ZM560-640v-200H320v560h440v-360H560ZM160-40q-33 0-56.5-23.5T80-120v-560h80v560h440v80H160Zm160-800v200-200 560-560Z"/></svg>
+						<span id="ipvalue">${ip}</span> <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="M760-200H320q-33 0-56.5-23.5T240-280v-560q0-33 23.5-56.5T320-920h280l240 240v400q0 33-23.5 56.5T760-200ZM560-640v-200H320v560h440v-360H560ZM160-40q-33 0-56.5-23.5T80-120v-560h80v560h440v80H160Zm160-800v200-200 560-560Z"/></svg>
 					</div>
 
 					<!-- Display Provider info, if any -->
@@ -282,27 +345,22 @@ export default {
 				</div>
 
 				<div class="infomodalBackground" id="infomodalBackground">
-					<div class="infomodal" id="infomodal">
-						<div class="infomodalClose" id="closeModal">
-							<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+						<div class="detailsCodeBlock" id="copyDetailsButton">
+							<div class="copyDetailsHeader">
+								<div class="dimmed">JSON</div>
+								<div class="copyDetailsButton" id="copyDetailsButton">
+									<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="M760-200H320q-33 0-56.5-23.5T240-280v-560q0-33 23.5-56.5T320-920h280l240 240v400q0 33-23.5 56.5T760-200ZM560-640v-200H320v560h440v-360H560ZM160-40q-33 0-56.5-23.5T80-120v-560h80v560h440v80H160Zm160-800v200-200 560-560Z"/></svg>
+								</div>
+							</div>
+							<span id="curltext">${JSON.stringify(details, null, 2)}</span>
 						</div>
-						<h3>When does this matter?</h3>
-						<p>When you need to confirm your public IP.</p>
-						<p>Use from any terminal:</p>
-						<div id="curltext">
-							<p><span id="curltext"><b>curl ip.now</b></span> <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="M760-200H320q-33 0-56.5-23.5T240-280v-560q0-33 23.5-56.5T320-920h280l240 240v400q0 33-23.5 56.5T760-200ZM560-640v-200H320v560h440v-360H560ZM160-40q-33 0-56.5-23.5T80-120v-560h80v560h440v80H160Zm160-800v200-200 560-560Z"/></svg></p>
-						</div>
-					</div>
-				</div>				
-			</div>			
+				</div>
+			</div>
 
 		<script nonce="${nonce}">
 			document.addEventListener('DOMContentLoaded', () => {
 				const infoButton = document.getElementById('infobutton');
 				infoButton.addEventListener('click', toggleModal);
-
-				const closeModal = document.getElementById('closeModal');
-				closeModal.addEventListener('click', toggleModal);
 
 				const ipElement = document.getElementById('ip');
 					ipElement.addEventListener('click', () => {
@@ -311,6 +369,11 @@ export default {
 
 				const curltext = document.getElementById('curltext');
 					curltext.addEventListener('click', () => {
+						copyToClipboard('curltext');
+				});
+
+				const copyDetailsButton = document.getElementById('copyDetailsButton');
+					copyDetailsButton.addEventListener('click', () => {
 						copyToClipboard('curltext');
 				});
 
@@ -375,6 +438,7 @@ export default {
 					modalBackground.style.display = "flex";
 				}
 			}
+
 			// Close modal if user clicks outside of it (works on desktop)
 			window.onclick = function(event) {
 				const modal = document.getElementById('infomodal');
@@ -391,6 +455,13 @@ export default {
 					toggleModal();
 				}
 			}
+			// Close modal if user presses ESC
+			window.addEventListener("keydown", function(event) {
+			    const modalBackground = document.getElementById("infomodalBackground");
+			    if (event.key === "Escape" && modalBackground.style.display === "flex") {
+			        toggleModal();
+			    }
+			});
 		</script>
 		</body>
 		</html>
