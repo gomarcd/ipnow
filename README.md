@@ -60,7 +60,8 @@ With that, you instantly have your public IP address copied to clipboard.
 ## Screenshots
 
 <div align="center">
-	<img src="./curl.png" alt="Curl Screenshot" width="700">
+	<img src="./curl.png" alt="Curl Screenshot" width="300">
+	<img src="./curldetails.png" alt="Curl Details" width="300">
 </div>
 
 <div align="center">
