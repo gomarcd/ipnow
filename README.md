@@ -69,6 +69,11 @@ With that, you instantly have your public IP address copied to clipboard.
 	<img src="./darkmode.png" alt="Dark Mode Screenshot" width="300">  
 </div>
 
+<div align="center">
+	<img src="./lightmodeDetails.png" alt="Light Mode Details" width="300">
+	<img src="./darkmodeDetails.png" alt="Dark Mode Details" width="300">  
+</div>
+
 # Support & Communities
 
 Provide feedback or submit feature requests on our subreddit!
