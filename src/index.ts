@@ -151,7 +151,7 @@ export default {
 						margin: auto;
 						margin-top: 60px;
 						border-radius: 10px;
-						min-width: 20vw;
+						min-width: 25vw;
 						box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 					}
 
@@ -302,7 +302,20 @@ export default {
 				<div class="ipcard">
 					<div class="ip" id="ip">
 						<h3>IP address</h3>
-						<span id="ipvalue">${ip}</span> <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="M760-200H320q-33 0-56.5-23.5T240-280v-560q0-33 23.5-56.5T320-920h280l240 240v400q0 33-23.5 56.5T760-200ZM560-640v-200H320v560h440v-360H560ZM160-40q-33 0-56.5-23.5T80-120v-560h80v560h440v80H160Zm160-800v200-200 560-560Z"/></svg>
+						<span id="ipvalue">${ip}</span> 
+						<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="hidden">
+							<defs>
+								<symbol id="copyToClipboard" viewBox="0 -960 960 960">
+									<path d="M760-200H320q-33 0-56.5-23.5T240-280v-560q0-33 23.5-56.5T320-920h280l240 240v400q0 33-23.5 56.5T760-200ZM560-640v-200H320v560h440v-360H560ZM160-40q-33 0-56.5-23.5T80-120v-560h80v560h440v80H160Zm160-800v200-200 560-560Z" />
+								</symbol>
+								<symbol id="copyToClipboardCheckmark" fill="#28a745" viewBox="0 -960 960 960">
+									<path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/>
+								</symbol>
+							</defs>
+						</svg>
+						<svg height="24px" width="24px" fill="#5f6368">
+							<use href="#copyToClipboard"></use>
+						</svg>
 					</div>
 
 					<!-- Display Provider info, if any -->
@@ -329,6 +342,9 @@ export default {
 						</div>
 
 						<div class="social-links">
+							<a href="https://gomarcd.featurebase.app" target="_blank" aria-label="Feedback">
+								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M480 32c0-12.9-7.8-24.6-19.8-29.6s-25.7-2.2-34.9 6.9L381.7 53c-48 48-113.1 75-181 75l-8.7 0-32 0-96 0c-35.3 0-64 28.7-64 64l0 96c0 35.3 28.7 64 64 64l0 128c0 17.7 14.3 32 32 32l64 0c17.7 0 32-14.3 32-32l0-128 8.7 0c67.9 0 133 27 181 75l43.6 43.6c9.2 9.2 22.9 11.9 34.9 6.9s19.8-16.6 19.8-29.6l0-147.6c18.6-8.8 32-32.5 32-60.4s-13.4-51.6-32-60.4L480 32zm-64 76.7L416 240l0 131.3C357.2 317.8 280.5 288 200.7 288l-8.7 0 0-96 8.7 0c79.8 0 156.5-29.8 215.3-83.3z"/></svg>
+							</a>
 							<a href="https://twitter.com/gomarcd" target="_blank" aria-label="Twitter">
 								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M459.4 151.7c.3 4.5 .3 9.1 .3 13.6 0 138.7-105.6 298.6-298.6 298.6-59.5 0-114.7-17.2-161.1-47.1 8.4 1 16.6 1.3 25.3 1.3 49.1 0 94.2-16.6 130.3-44.8-46.1-1-84.8-31.2-98.1-72.8 6.5 1 13 1.6 19.8 1.6 9.4 0 18.8-1.3 27.6-3.6-48.1-9.7-84.1-52-84.1-103v-1.3c14 7.8 30.2 12.7 47.4 13.3-28.3-18.8-46.8-51-46.8-87.4 0-19.5 5.2-37.4 14.3-53 51.7 63.7 129.3 105.3 216.4 109.8-1.6-7.8-2.6-15.9-2.6-24 0-57.8 46.8-104.9 104.9-104.9 30.2 0 57.5 12.7 76.7 33.1 23.7-4.5 46.5-13.3 66.6-25.3-7.8 24.4-24.4 44.8-46.1 57.8 21.1-2.3 41.6-8.1 60.4-16.2-14.3 20.8-32.2 39.3-52.6 54.3z"/></svg>
 							</a>
@@ -353,7 +369,19 @@ export default {
 							<div class="copyDetailsHeader">
 								<div class="dimmed">JSON</div>
 								<div class="copyDetailsButton" id="copyDetailsButton">
-									<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="M760-200H320q-33 0-56.5-23.5T240-280v-560q0-33 23.5-56.5T320-920h280l240 240v400q0 33-23.5 56.5T760-200ZM560-640v-200H320v560h440v-360H560ZM160-40q-33 0-56.5-23.5T80-120v-560h80v560h440v80H160Zm160-800v200-200 560-560Z"/></svg>
+									<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="hidden">
+										<defs>
+											<symbol id="copyToClipboard" viewBox="0 -960 960 960">
+												<path d="M760-200H320q-33 0-56.5-23.5T240-280v-560q0-33 23.5-56.5T320-920h280l240 240v400q0 33-23.5 56.5T760-200ZM560-640v-200H320v560h440v-360H560ZM160-40q-33 0-56.5-23.5T80-120v-560h80v560h440v80H160Zm160-800v200-200 560-560Z" />
+											</symbol>
+											<symbol id="copyToClipboardCheckmark" fill="#28a745" viewBox="0 -960 960 960">
+												<path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q65 0 123 19t107 53l-58 59q-38-24-81-37.5T480-800q-133 0-226.5 93.5T160-480q0 133 93.5 226.5T480-160q133 0 226.5-93.5T800-480q0-18-2-36t-6-35l65-65q11 32 17 66t6 70q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm-56-216L254-466l56-56 114 114 400-401 56 56-456 457Z"/>
+											</symbol>
+										</defs>
+									</svg>
+									<svg height="24px" width="24px" fill="#5f6368">
+										<use href="#copyToClipboard"></use>
+									</svg>
 								</div>
 							</div>
 							<span id="curltext">${JSON.stringify(details, null, 2)}</span>
@@ -366,19 +394,14 @@ export default {
 				const infoButton = document.getElementById('infobutton');
 				infoButton.addEventListener('click', toggleModal);
 
-				const ipElement = document.getElementById('ip');
-					ipElement.addEventListener('click', () => {
-						copyToClipboard('ipvalue');
-				});
-
-				const curltext = document.getElementById('curltext');
-					curltext.addEventListener('click', () => {
-						copyToClipboard('curltext');
+				const copyIpButton = document.getElementById('ip');
+				copyIpButton.addEventListener('click', () => {
+					copyToClipboard('ipvalue', '#ip svg use');
 				});
 
 				const copyDetailsButton = document.getElementById('copyDetailsButton');
-					copyDetailsButton.addEventListener('click', () => {
-						copyToClipboard('curltext');
+				copyDetailsButton.addEventListener('click', () => {
+					copyToClipboard('curltext', '#copyDetailsButton svg use');
 				});
 
 			    const osInfoElement = document.getElementById('os-info');
@@ -421,19 +444,19 @@ export default {
 			    }
 			});
 
-			function copyToClipboard(elementId) {
+			function copyToClipboard(elementId, iconId) {
 				const element = document.getElementById(elementId);
 				const textToCopy = element.textContent || element.innerText;
-				navigator.clipboard.writeText(textToCopy).then(function() {
-					const notification = document.getElementById('notification');
-					notification.style.display = 'block';
-					setTimeout(() => {
-						notification.style.display = 'none';
-					}, 3000);
-				}, function(err) {
-					alert('Failed to copy: ', err);
+				const copyToClipboardIcon = document.querySelector(iconId);
+				navigator.clipboard.writeText(textToCopy).then(() => {
+						copyToClipboardIcon.setAttribute('href', '#copyToClipboardCheckmark');
+						setTimeout(() => {
+							copyToClipboardIcon.setAttribute('href', '#copyToClipboard');
+							copyToClipboardIcon.parentNode.setAttribute('fill', '#5f6368');
+						}, 1500);						
 				});
 			}
+
 			function toggleModal() {
 				const modalBackground = document.getElementById("infomodalBackground");
 				if (modalBackground.style.display === "flex") {
