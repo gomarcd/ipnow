@@ -1,0 +1,230 @@
+@font-face {
+    font-family: 'Ubuntu';
+    src: url('https://fonts.gstatic.com/s/ubuntu/v15/4iCv6KVjbNBYlgoCjC3jsGyN.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+body {
+    background-color: #f4f4f4;
+    color: #2D2D2D;
+    font-family: 'Ubuntu Mono', monospace;
+    display: flex;
+    height: 100%;
+    width: 100%;
+    border: none;
+    margin: 0;
+}
+
+.detailsCodeBlock {
+    border: none;
+    border-radius: 5px;
+    padding-top: 20px;
+    padding-bottom: 25px;
+    padding-left: 25px;
+    padding-right: 25px;
+    white-space: pre-wrap;
+    overflow-x: auto;
+    font-family: 'Ubuntu Mono', monospace;
+    font-size: 0.9em;
+    width: 60vw;
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    backdrop-filter: blur(6px);
+    background-color: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.copyDetailsHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.copyDetailsButton {
+    display: flex;
+    align-self: flex-end;
+}
+
+.detailsJson {
+    display: none;
+}
+
+.hidden {
+    display: none;
+}
+
+h1 {
+    font-size: 24px;
+}
+
+.container {
+    margin: auto;
+    height: 85vh;
+    max-width: 80vw;
+}
+
+.ip {
+    cursor: pointer;
+}
+
+.dimmed {
+    color: #6c757d;
+}
+
+.ipcard {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    background-color: white;
+    padding-top: 15px;
+    padding-bottom: 30px;
+    padding-left: 35px;
+    padding-right: 35px;
+    margin: auto;
+    margin-top: 60px;
+    border-radius: 10px;
+    min-width: 25vw;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.footer {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    margin-top: 25px;
+}
+
+.info {
+    position: relative;
+    align-self: flex-start;
+}
+
+.infomodalBackground {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    justify-content: center;
+    align-items: center;
+}
+
+.infomodal {
+    display: flex;
+    flex-direction: column;
+    padding-left: 35px;
+    padding-right: 35px;
+    padding-top: 20px;
+    padding-bottom: 35px;
+    position: relative;
+    background-color: white;
+    border-radius: 8px;
+    max-width: 40vw;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.infomodalClose {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    cursor: pointer;
+    color: #666;
+    width: 16px;
+    height: 16px;
+}
+
+.infomodalClose:hover {
+    color: #333;
+}
+
+.social-links {
+    align-self: flex-end;
+}
+
+.social-links a {
+    display: inline-block;
+}
+
+.notification {
+    display: none;
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    border-radius: 5px;
+}
+
+svg {
+    fill: #6c757d;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 5px;
+    width: 16px;
+    height: 16px;
+    vertical-align: -5px;
+    transition: transform 0.1s ease, fill 0.1s ease;
+}
+
+@media (max-width: 600px) {
+    .ipcard {
+        max-width: 90%;
+    }
+}
+
+/* Apply hover effects only on devices that support hover (desktops/laptops) */
+@media (hover: hover) {
+    svg:hover {
+        background-color: #e0e0e0;
+        fill: #121212;
+    }
+    svg:active {
+        transform: scale(0.95);
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #121212;
+        color: #e9ecef;
+    }
+    pre {
+        background-color: #2a2a2a;
+        color: #e9ecef;
+    }
+    h1, h3 {
+        color: #e9ecef;
+    }
+    .ipcard {
+        background-color: #1e1e1e;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
+    }
+    .detailsCodeBlock {
+        border: 1px solid #6c757d;
+        backdrop-filter: blur(6px);
+        background-color: rgba(0, 0, 0, 0.5);
+        box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
+    }
+    svg {
+        fill: #6c757d;
+    }
+    /* Dark mode hover effects (only for hover-enabled devices) */
+    @media (hover: hover) {
+        svg:hover {
+            background-color: #333;
+            fill: #e9ecef;
+        }
+    }
+    .infomodal {
+        background-color: #1e1e1e;
+        color: #e9ecef;
+    }
+}
