@@ -71,16 +71,29 @@ export default {
 				headers: { "Content-Type": "application/json" },
 			});
 		}
+				
+		// Handle valid curl requests
+		if (
+			(url.pathname === "/" || url.pathname === "/details") &&
+			(userAgent.toLowerCase().includes("curl") ||
+				userAgent.toLowerCase().includes("wget") ||
+				acceptHeader.includes("text/plain"))
+		) {
+			console.log("Request processed by curl or wget");
+			const ip = headers.get("cf-connecting-ip") || "Unknown";
+			return new Response(`${ip}\n`, {
+				headers: { "Content-Type": "text/plain" },
+			});
+		}
 
-		// Return plain text to curl requests
+		// Handle unmatched routes for curl-like requests
 		if (
 			userAgent.toLowerCase().includes("curl") ||
 			userAgent.toLowerCase().includes("wget") ||
 			acceptHeader.includes("text/plain")
 		) {
-			console.log("Request processed by curl or wget")
-			const ip = headers.get("cf-connecting-ip") || "Unknown";
-			return new Response(`${ip}\n`, {
+			return new Response("404 Not Found\n", {
+				status: 404,
 				headers: { "Content-Type": "text/plain" },
 			});
 		}
@@ -390,7 +403,14 @@ export default {
 		if (request.url.startsWith('http://') && !userAgent.includes('curl') && !url.hostname.includes('localhost')) {
 			const httpsUrl = request.url.replace('http://', 'https://');
 			return Response.redirect(httpsUrl, 301);
-		}	
+		}
+
+		if (url.pathname !== "/" && url.pathname !== "/details") {
+			return new Response(notFoundResponse, {
+				status: 404,
+				headers: { "Content-Type": "text/html" },
+			});
+		}
 
 		return new Response(html, {
 			headers: { 
