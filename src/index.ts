@@ -175,7 +175,7 @@ export default {
 							<!-- Display Device info, if any -->
 							<div id="device-section" class="hidden">
 								<h3>Device</h3>
-								<span id="browser-info"></span>, <span id="os-info"></span>
+								<span id="browser-info"></span>, <span id="os-info"></span><BR>
 							</div>
 
 							<div class="footer">
@@ -253,20 +253,11 @@ export default {
 						let platform = "Unknown platform";
 						let browser = "Unknown browser";
 
-						if (navigator.userAgentData) {
-							platform = navigator.userAgentData.platform || platform;
-							browser = navigator.userAgentData.brands?.[0]?.brand || browser;
+						// Platform detection
+						if (navigator.userAgentData?.platform) {
+							platform = navigator.userAgentData.platform;
 						} else {
 							const userAgent = navigator.userAgent;
-							if (userAgent.includes("Chrome")) {
-								browser = "Chrome";
-							} else if (userAgent.includes("Safari") && !userAgent.includes("Chrome")) {
-								browser = "Safari";
-							} else if (userAgent.includes("Firefox")) {
-								browser = "Firefox";
-							} else if (userAgent.includes("Edge")) {
-								browser = "Edge";
-							}
 							if (/iPad|iPhone|iPod/.test(userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) {
 								platform = "iOS";
 							} else if (userAgent.includes("Mac")) {
@@ -278,10 +269,37 @@ export default {
 							}
 						}
 
+						// Browser detection
+						if (navigator.brave) {
+							browser = "Brave";
+						} else if (navigator.userAgentData?.brands) {
+							const brands = navigator.userAgentData.brands.map(b => b.brand);
+							
+							if (brands.includes("Microsoft Edge")) {
+								browser = "Edge";
+							} else if (brands.includes("Google Chrome")) {
+								browser = "Chrome";
+							} else if (brands.includes("Chromium") && !brands.includes("Google Chrome")) {
+								browser = "Brave";
+							}
+						} else {
+							const userAgent = navigator.userAgent;
+							if (userAgent.includes("Edg")) {
+								browser = "Edge";  // This correctly identifies Edge
+							} else if (userAgent.includes("Chrome")) {
+								browser = "Chrome";
+							} else if (userAgent.includes("Safari") && !userAgent.includes("Chrome")) {
+								browser = "Safari";
+							} else if (userAgent.includes("Firefox")) {
+								browser = "Firefox";
+							}
+						}
+
+
 						osInfoElement.textContent = platform;
 						browserInfoElement.textContent = browser;
 
-						if (platform !== "Unknown platform" || browser !== "Unknown browser") {
+						if (platform !== "Unknown platform" && browser !== "Unknown browser") {
 							deviceSection.classList.remove('hidden');
 						}
 					});
