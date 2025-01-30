@@ -270,8 +270,21 @@ export default {
 						}
 
 						// Browser detection
+						const userAgent = navigator.userAgent;
+
 						if (navigator.brave) {
-							browser = "Brave";
+							browser = "Brave"; // Direct Brave detection
+						} else if (/iPad|iPhone|iPod/.test(userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) {
+							// **iOS Browser Detection**
+							if (userAgent.includes("CriOS")) {
+								browser = "Chrome";
+							} else if (userAgent.includes("FxiOS")) {
+								browser = "Firefox";
+							} else if (userAgent.includes("Brave")) {
+								browser = "Brave";
+							} else {
+								browser = "Safari"; // Default for all WebKit browsers on iOS
+							}
 						} else if (navigator.userAgentData?.brands) {
 							const brands = navigator.userAgentData.brands.map(b => b.brand);
 							
@@ -279,13 +292,20 @@ export default {
 								browser = "Edge";
 							} else if (brands.includes("Google Chrome")) {
 								browser = "Chrome";
-							} else if (brands.includes("Chromium") && !brands.includes("Google Chrome")) {
+							} else if (brands.includes("Brave")) {
 								browser = "Brave";
+							} else if (brands.includes("Chromium") && !brands.includes("Google Chrome") && userAgent.includes("Brave")) {
+								browser = "Brave";
+							} else if (brands.includes("Firefox")) {
+								browser = "Firefox";
+							} else if (brands.includes("Safari")) {
+								browser = "Safari";
 							}
 						} else {
-							const userAgent = navigator.userAgent;
 							if (userAgent.includes("Edg")) {
-								browser = "Edge";  // This correctly identifies Edge
+								browser = "Edge";
+							} else if (userAgent.includes("Brave")) {
+								browser = "Brave";
 							} else if (userAgent.includes("Chrome")) {
 								browser = "Chrome";
 							} else if (userAgent.includes("Safari") && !userAgent.includes("Chrome")) {
@@ -294,8 +314,6 @@ export default {
 								browser = "Firefox";
 							}
 						}
-
-
 						osInfoElement.textContent = platform;
 						browserInfoElement.textContent = browser;
 
