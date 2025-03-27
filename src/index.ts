@@ -49,7 +49,11 @@ export default {
 		}
 
 		// Direct IP/domain lookup - Must come before 404 handler
-		if (url.pathname.length > 1 && (/^\/\d+\.\d+\.\d+\.\d+$/.test(url.pathname) || /^\/[a-zA-Z0-9][a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/.test(url.pathname))) {
+		if (url.pathname.length > 1 && (
+		    /^\/\d+\.\d+\.\d+\.\d+$/.test(url.pathname) || // IPv4
+		    /^\/[a-zA-Z0-9][a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/.test(url.pathname) || // Domain
+		    /^\/[0-9a-fA-F:]+$/.test(url.pathname) // IPv6
+		)) {
 		  const target = url.pathname.substring(1);
 		  
 		  try {
