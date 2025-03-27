@@ -48,6 +48,26 @@ export default {
 			});
 		}
 
+		// Direct IP lookup - Must come before 404 handler
+		if (url.pathname.length > 1 && /^\/\d+\.\d+\.\d+\.\d+$/.test(url.pathname)) {
+		  const targetIp = url.pathname.substring(1);
+		  
+		  try {
+		    const whoisResponse = await fetch(`http://ip-api.com/json/${targetIp}`);
+		    const whoisData = await whoisResponse.json();
+		    
+		    // Return plain text for all users
+		    return new Response(JSON.stringify(whoisData, null, 2) + "\n", {
+		      headers: { "Content-Type": "text/plain" }
+		    });
+		  } catch (error) {
+		    return new Response("Error fetching WHOIS data\n", {
+		      status: 500, 
+		      headers: { "Content-Type": "text/plain" }
+		    });
+		  }
+		}
+
 		// WHOIS FUNCTIONALITY - Handle /whois routes
 		if (url.pathname.startsWith("/whois")) {
 			// Extract IP from path
@@ -412,108 +432,73 @@ export default {
 				<meta charset="UTF-8">
 				<meta name="viewport" content="width=device-width, initial-scale=1.0">
 				<title>404 Not Found</title>
-			<style>
-				body {
-					display: flex;
-					align-items: center;
-					justify-content: center;
-					height: 100vh;
-					margin: 0;
-					font-family: 'Ubuntu Mono', monospace;
-					background-color: #f4f4f4;
-				}
-
-				.detailsCodeBlock {
-					border: none;
-					border-radius: 5px;
-					padding-top: 20px;
-					padding-bottom: 25px;
-					padding-left: 25px;
-					padding-right: 25px;
-					white-space: pre-wrap;
-					overflow-x: auto;
-					font-family: 'Ubuntu Mono', monospace;
-					font-size: 0.9em;
-					width: 60vw;
-					display: flex;
-					flex-direction: column;
-					align-self: center;
-					backdrop-filter: blur(6px);
-					background-color: rgba(255, 255, 255, 0.9);
-					color: #2D2D2D;
-					box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-				}
-
-				@media (prefers-color-scheme: dark) {
+				<style>
 					body {
-						background-color: #0d0d0d;
+						display: flex;
+						align-items: center;
+						justify-content: center;
+						height: 100vh;
+						margin: 0;
+						font-family: 'Ubuntu Mono', monospace;
+						background-color: #f4f4f4;
 					}
+
 					.detailsCodeBlock {
-						border: 1px solid #6c757d;
+						border: none;
+						border-radius: 5px;
+						padding-top: 20px;
+						padding-bottom: 25px;
+						padding-left: 25px;
+						padding-right: 25px;
+						white-space: pre-wrap;
+						overflow-x: auto;
+						font-family: 'Ubuntu Mono', monospace;
+						font-size: 0.9em;
+						width: 60vw;
+						display: flex;
+						flex-direction: column;
+						align-self: center;
 						backdrop-filter: blur(6px);
-						background-color: rgba(0, 0, 0, 0.5);
-						color: #e9ecef;
-						box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
+						background-color: rgba(255, 255, 255, 0.9);
+						color: #2D2D2D;
+						box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 					}
-				}
-			</style>
 
-			</head>
-			<body>
-				<div class="detailsCodeBlock">
-					<h1>404 Not Found</h1>
-					<p>Sorry, the page you're looking for does not exist.</p>
-				</div>
-			</body>
-			</html>	  
-		`;
+	               @media (prefers-color-scheme: dark) {
+	                 body {
+	                   background-color: #0d0d0d;
+	                 }
+	                 .detailsCodeBlock {
+	                   border: 1px solid #6c757d;
+	                   backdrop-filter: blur(6px);
+	                   background-color: rgba(0, 0, 0, 0.5);
+	                   color: #e9ecef;
+	                   box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
+	                 }
+	               }
+				</style>
+           </head>
+           <body>
+             <div class="detailsCodeBlock">
+               <h1>404 Not Found</h1>
+               <p>Sorry, the page you're looking for does not exist.</p>
+             </div>
+           </body>
+           </html>	  
+         `;
 
-		if (request.url.startsWith('http://') && !userAgent.includes('curl') && !url.hostname.includes('localhost')) {
-			const httpsUrl = request.url.replace('http://', 'https://');
-			return Response.redirect(httpsUrl, 301);
-		}
+         if (url.pathname !== "/" && url.pathname !== "/details") {
+           return new Response(notFoundResponse, {
+             status: 404,
+             headers: { "Content-Type": "text/html" },
+           });
+         }
 
-		if (url.pathname.length > 1 && /^\/\d+\.\d+\.\d+\.\d+$/.test(url.pathname)) {
-		  const targetIp = url.pathname.substring(1);
-		  
-		  try {
-		    const whoisResponse = await fetch(`http://ip-api.com/json/${targetIp}`);
-		    const whoisData = await whoisResponse.json();
-		    
-		    // For CLI users
-		    if (userAgent.toLowerCase().includes("curl") || 
-		        userAgent.toLowerCase().includes("wget") || 
-		        acceptHeader.includes("text/plain")) {
-		      return new Response(JSON.stringify(whoisData, null, 2) + "\n", {
-		        headers: { "Content-Type": "text/plain" }
-		      });
-		    }
-		    
-		    // For browser users
-		    return new Response(JSON.stringify(whoisData, null, 2) + "\n", {
-		      headers: { "Content-Type": "text/plain" }
-		    });
-		  } catch (error) {
-		    return new Response("Error fetching WHOIS data\n", {
-		      status: 500, 
-		      headers: { "Content-Type": "text/plain" }
-		    });
-		  }
-		}
-
-		if (url.pathname !== "/" && url.pathname !== "/details") {
-			return new Response(notFoundResponse, {
-				status: 404,
-				headers: { "Content-Type": "text/html" },
-			});
-		}
-
-		return new Response(html, {
-			headers: { 
-				"Content-Type": "text/html",
-				"Content-Security-Policy": `default-src 'self'; script-src 'self' 'nonce-${nonce}' https://plausible.io; style-src 'self' 'nonce-${nonce}' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self'; connect-src 'self' https://plausible.io;`
-			}
-		});
-
-	}
+         return new Response(html, {
+           headers: { 
+             "Content-Type": "text/html",
+             "Content-Security-Policy": `default-src 'self'; script-src 'self' 'nonce-${nonce}' https://plausible.io; style-src 'self' 'nonce-${nonce}' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self'; connect-src 'self' https://plausible.io http://ip-api.com;`
+           }
+         });
+   }
 };
