@@ -48,15 +48,15 @@ export default {
 			});
 		}
 
-		// Direct IP lookup - Must come before 404 handler
+		// Direct IP/domain lookup - Must come before 404 handler
 		if (url.pathname.length > 1 && (/^\/\d+\.\d+\.\d+\.\d+$/.test(url.pathname) || /^\/[a-zA-Z0-9][a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/.test(url.pathname))) {
 		  const target = url.pathname.substring(1);
 		  
 		  try {
-		    const whoisResponse = await fetch(`http://ip-api.com/json/${target}`);
+		    // Include additional fields in the API request
+		    const whoisResponse = await fetch(`http://ip-api.com/json/${target}?fields=status,message,country,countryCode,region,regionName,city,zip,lat,lon,timezone,isp,org,as,query,reverse,mobile,proxy,hosting`);
 		    const whoisData = await whoisResponse.json();
 		    
-		    // Return plain text for all users
 		    return new Response(JSON.stringify(whoisData, null, 2) + "\n", {
 		      headers: { "Content-Type": "text/plain" }
 		    });
