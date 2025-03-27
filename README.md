@@ -18,7 +18,11 @@ So there you have it, yet *another* "What is my IP" site.
 
 :white_check_mark: Webapp works seemlessly on all devices
 
-## Usage
+## WHOIS Support
+
+Just added WHOIS support! So you can now quickly find information about an IP address or domain name too, instead of only being able to find your own IP.
+
+## Usage - find your IP
 
 **Browser**:
 
@@ -62,7 +66,18 @@ You can do the same with the /details endpoint to get more info:
 ```
 curl ip.now/details
 ```
-See our screenshots below and give it a try!
+
+## Usage - query any IP or domain
+
+Instantly get information about any IP address or domain name:
+
+`curl ip.now/1.1.1.1` 
+
+or:
+
+`curl ip.now/google.com`
+
+See our screenshots below and give it all a try!
 
 ## Screenshots
 
