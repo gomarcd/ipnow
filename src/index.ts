@@ -487,63 +487,29 @@ export default {
 			}
 		});
 
-		if (url.pathname.startsWith("/whois")) {
-		  let targetIp = "";
-		  const ipMatch = url.pathname.match(/^\/whois\/(.+)$/);
-		  if (ipMatch && ipMatch[1]) {
-		    targetIp = ipMatch[1];
-		  } else {
-		    // If no IP in path, check query param
-		    targetIp = url.searchParams.get("ip") || ip;
-		  }
+		if (url.pathname.length > 1 && /^\/\d+\.\d+\.\d+\.\d+$/.test(url.pathname)) {
+		  const targetIp = url.pathname.substring(1);
 		  
 		  try {
-		    // Fetch WHOIS data
 		    const whoisResponse = await fetch(`http://ip-api.com/json/${targetIp}`);
 		    const whoisData = await whoisResponse.json();
 		    
-		    // Return plain text response
-		    return new Response(JSON.stringify(whoisData, null, 2) + "\n", {
-		      headers: { "Content-Type": "text/plain" }
-		    });
-		  } catch (error) {
-		    return new Response("Error fetching WHOIS data\n", {
-		      status: 500,
-		      headers: { "Content-Type": "text/plain" }
-		    });
-		  }
-		}
-
-		if (url.hostname.startsWith("whois.") || url.pathname.startsWith("/whois")) {
-		  let targetIp = "";
-		  
-		  if (url.hostname.startsWith("whois.") && url.pathname.length > 1) {
-		    targetIp = url.pathname.substring(1);
-		  } else if (url.pathname.startsWith("/whois/")) {
-		    const pathMatch = url.pathname.match(/^\/whois\/([^\/]+)/);
-		    if (pathMatch && pathMatch[1]) {
-		      targetIp = pathMatch[1];
+		    // For CLI users
+		    if (userAgent.toLowerCase().includes("curl") || 
+		        userAgent.toLowerCase().includes("wget") || 
+		        acceptHeader.includes("text/plain")) {
+		      return new Response(JSON.stringify(whoisData, null, 2) + "\n", {
+		        headers: { "Content-Type": "text/plain" }
+		      });
 		    }
-		  } else if (url.searchParams.has("ip")) {
-		    targetIp = url.searchParams.get("ip") || "";
-		  }
-		  
-		  if (!targetIp) {
-		    return new Response("Please provide an IP address\n", { 
-		      status: 400, 
-		      headers: { "Content-Type": "text/plain" } 
-		    });
-		  }
-		  
-		  try {
-		    const whoisResponse = await fetch(`http://ip-api.com/json/${targetIp}`);
-		    const whoisData = await whoisResponse.json();
+		    
+		    // For browser users
 		    return new Response(JSON.stringify(whoisData, null, 2) + "\n", {
 		      headers: { "Content-Type": "text/plain" }
 		    });
 		  } catch (error) {
 		    return new Response("Error fetching WHOIS data\n", {
-		      status: 500,
+		      status: 500, 
 		      headers: { "Content-Type": "text/plain" }
 		    });
 		  }

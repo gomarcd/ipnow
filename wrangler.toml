@@ -13,10 +13,7 @@ assets = { directory = "./public/", binding = "ASSETS" }
 enabled = true
 
 [env.production]
-routes = [
-	"ip.now/*",
-	"whois.ip.now/*" 
-]
+route = "ip.now/*",
 
 [env.dev]
 route = "localhost:8789"
