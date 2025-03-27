@@ -118,7 +118,7 @@ export default {
 		crypto.getRandomValues(array);
 		const nonce = btoa(String.fromCharCode(...array));
 
-		const html = /* html */`
+		const html = `
 			<!DOCTYPE html>
 			<html lang="en">
 				<head>

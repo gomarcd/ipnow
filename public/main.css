@@ -186,7 +186,6 @@ svg {
     }
 }
 
-/* Apply hover effects only on devices that support hover (desktops/laptops) */
 @media (hover: hover) {
     svg:hover {
         background-color: #e0e0e0;
