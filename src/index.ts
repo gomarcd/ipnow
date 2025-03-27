@@ -473,13 +473,6 @@ export default {
 			return Response.redirect(httpsUrl, 301);
 		}
 
-		if (url.pathname !== "/" && url.pathname !== "/details") {
-			return new Response(notFoundResponse, {
-				status: 404,
-				headers: { "Content-Type": "text/html" },
-			});
-		}
-
 		if (url.pathname.length > 1 && /^\/\d+\.\d+\.\d+\.\d+$/.test(url.pathname)) {
 		  const targetIp = url.pathname.substring(1);
 		  
@@ -508,12 +501,19 @@ export default {
 		  }
 		}
 
+		if (url.pathname !== "/" && url.pathname !== "/details") {
+			return new Response(notFoundResponse, {
+				status: 404,
+				headers: { "Content-Type": "text/html" },
+			});
+		}
+
 		return new Response(html, {
 			headers: { 
 				"Content-Type": "text/html",
 				"Content-Security-Policy": `default-src 'self'; script-src 'self' 'nonce-${nonce}' https://plausible.io; style-src 'self' 'nonce-${nonce}' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self'; connect-src 'self' https://plausible.io;`
 			}
-		});if (url.pathname !== "/" && url.pathname !== "/details
+		});
 
 	}
 };
