@@ -49,11 +49,11 @@ export default {
 		}
 
 		// Direct IP lookup - Must come before 404 handler
-		if (url.pathname.length > 1 && /^\/\d+\.\d+\.\d+\.\d+$/.test(url.pathname)) {
-		  const targetIp = url.pathname.substring(1);
+		if (url.pathname.length > 1 && (/^\/\d+\.\d+\.\d+\.\d+$/.test(url.pathname) || /^\/[a-zA-Z0-9][a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/.test(url.pathname))) {
+		  const target = url.pathname.substring(1);
 		  
 		  try {
-		    const whoisResponse = await fetch(`http://ip-api.com/json/${targetIp}`);
+		    const whoisResponse = await fetch(`http://ip-api.com/json/${target}`);
 		    const whoisData = await whoisResponse.json();
 		    
 		    // Return plain text for all users
