@@ -17,38 +17,6 @@ body {
     margin: 0;
 }
 
-.whois-section {
-    margin-top: 20px;
-    text-align: center;
-}
-
-#whois-input {
-    width: 80%;
-    padding: 10px;
-    margin-bottom: 10px;
-    font-size: 16px;
-}
-
-#whois-button {
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-}
-
-#whois-result {
-    margin-top: 20px;
-    text-align: left;
-    white-space: pre-wrap;
-    background: #f4f4f4;
-    padding: 10px;
-    border-radius: 5px;
-    display: none;
-}
-
-#whois-result.hidden {
-    display: none;
-}
-
 .detailsCodeBlock {
     border: none;
     border-radius: 5px;
