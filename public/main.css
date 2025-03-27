@@ -151,6 +151,10 @@ h1 {
     display: inline-block;
 }
 
+.social-links a[aria-label="Plausible Analytics"] {
+  margin-right: -4px;
+}
+
 .notification {
     display: none;
     background-color: #4CAF50;
@@ -162,6 +166,8 @@ h1 {
     z-index: 1000;
     border-radius: 5px;
 }
+
+
 
 svg {
     fill: #6c757d;
