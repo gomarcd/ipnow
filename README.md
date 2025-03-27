@@ -14,9 +14,7 @@ So there you have it, yet *another* "What is my IP" site.
 
 :white_check_mark: /details endpoint for JSON output with more advanced details
 
-:white_check_mark: Auto light/dark mode per system settings
-
-:white_check_mark: Webapp works seemlessly on all devices
+:white_check_mark: NEW: WHOIS support - get instant information about any IP address or domain name
 
 ## WHOIS Support
 
