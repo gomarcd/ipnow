@@ -48,6 +48,41 @@ export default {
 			});
 		}
 
+		// WHOIS FUNCTIONALITY - Handle /whois routes
+		if (url.pathname.startsWith("/whois")) {
+			// Extract IP from path
+			let targetIp = "";
+			
+			// Check for /whois/1.2.3.4 pattern
+			const ipPathMatch = url.pathname.match(/^\/whois\/([0-9.]+)$/);
+			if (ipPathMatch && ipPathMatch[1]) {
+				targetIp = ipPathMatch[1];
+				console.log("Found IP in path:", targetIp);
+			} else {
+				// Check for IP in query param 
+				targetIp = url.searchParams.get("ip") || ip;
+				console.log("Using IP from param or visitor:", targetIp);
+			}
+			
+			try {
+				// Fetch WHOIS data from ip-api.com
+				console.log("Fetching data for:", targetIp);
+				const whoisResponse = await fetch(`http://ip-api.com/json/${targetIp}`);
+				const whoisData = await whoisResponse.json();
+				
+				// Return plain text response for all requests
+				return new Response(JSON.stringify(whoisData, null, 2) + "\n", {
+					headers: { "Content-Type": "text/plain" },
+				});
+			} catch (error) {
+				console.error("WHOIS lookup error:", error);
+				return new Response("Error fetching WHOIS data\n", {
+					status: 500,
+					headers: { "Content-Type": "text/plain" },
+				});
+			}
+		}
+
 		if (url.pathname === "/details") {
 			const ip = headers.get("cf-connecting-ip") || "Unknown";
 			const cf = request.cf || {};
@@ -451,5 +486,60 @@ export default {
 				"Content-Security-Policy": `default-src 'self'; script-src 'self' 'nonce-${nonce}' https://plausible.io; style-src 'self' 'nonce-${nonce}' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self'; connect-src 'self' https://plausible.io;`
 			}
 		});
+
+		if (url.pathname.startsWith("/whois")) {
+		  let targetIp = "";
+		  const ipMatch = url.pathname.match(/^\/whois\/(.+)$/);
+		  if (ipMatch && ipMatch[1]) {
+		    targetIp = ipMatch[1];
+		  } else {
+		    // If no IP in path, check query param
+		    targetIp = url.searchParams.get("ip") || ip;
+		  }
+		  
+		  try {
+		    // Fetch WHOIS data
+		    const whoisResponse = await fetch(`http://ip-api.com/json/${targetIp}`);
+		    const whoisData = await whoisResponse.json();
+		    
+		    // Return plain text response
+		    return new Response(JSON.stringify(whoisData, null, 2) + "\n", {
+		      headers: { "Content-Type": "text/plain" }
+		    });
+		  } catch (error) {
+		    return new Response("Error fetching WHOIS data\n", {
+		      status: 500,
+		      headers: { "Content-Type": "text/plain" }
+		    });
+		  }
+		}
+
+		if (url.hostname.startsWith("whois.")) {
+		  let targetIp = "";
+		  
+		  if (url.pathname.length > 1) {
+		    targetIp = url.pathname.substring(1);
+		    
+		    try {
+		      const whoisResponse = await fetch(`http://ip-api.com/json/${targetIp}`);
+		      const whoisData = await whoisResponse.json();
+		      
+		      return new Response(JSON.stringify(whoisData, null, 2) + "\n", {
+		        headers: { "Content-Type": "text/plain" }
+		      });
+		    } catch (error) {
+		      return new Response("Error fetching WHOIS data\n", {
+		        status: 500,
+		        headers: { "Content-Type": "text/plain" }
+		      });
+		    }
+		  } else {
+		    return new Response("Please provide an IP address: whois.ip.now/1.2.3.4\n", {
+		      status: 400,
+		      headers: { "Content-Type": "text/plain" }
+		    });
+		  }
+		}
+
 	}
 };
