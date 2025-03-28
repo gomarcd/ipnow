@@ -48,6 +48,7 @@ export default {
 			});
 		}
 
+		// Replace the Direct IP/d// Replace the Direct IP/domain lookup section with this implementation
 		// Direct IP/domain lookup - Must come before 404 handler
 		if (url.pathname.length > 1 && (
 		    /^\/\d+\.\d+\.\d+\.\d+$/.test(url.pathname) || // IPv4
@@ -57,15 +58,121 @@ export default {
 		  const target = url.pathname.substring(1);
 		  
 		  try {
-		    // Include additional fields in the API request
+		    // First get basic IP data from ip-api
 		    const whoisResponse = await fetch(`http://ip-api.com/json/${target}?fields=status,message,country,countryCode,region,regionName,city,zip,lat,lon,timezone,isp,org,as,query,reverse,mobile,proxy,hosting`);
 		    const whoisData = await whoisResponse.json();
 		    
-		    return new Response(JSON.stringify(whoisData, null, 2) + "\n", {
+		    // Create the formatted output object with the basic data
+		    const formattedData = {
+		      query: whoisData.query || target,
+		      status: whoisData.status,
+		      country: whoisData.country,
+		      countryCode: whoisData.countryCode,
+		      region: whoisData.region,
+		      regionName: whoisData.regionName,
+		      city: whoisData.city,
+		      zip: whoisData.zip,
+		      lat: whoisData.lat,
+		      lon: whoisData.lon,
+		      timezone: whoisData.timezone,
+		      isp: whoisData.isp,
+		      org: whoisData.org,
+		      as: whoisData.as
+		    };
+		    
+		    // Then try to get RDAP data
+		    try {
+		      // Determine if it's an IP or domain for RDAP lookup
+		      const rdapBootstrapUrl = /^\d+\.\d+\.\d+\.\d+$/.test(target) ? 
+		        `https://rdap.org/ip/${target}` : 
+		        `https://rdap.org/domain/${target}`;
+		      
+		      // Get the redirect from RDAP bootstrap service
+		      const bootstrapResponse = await fetch(rdapBootstrapUrl, {redirect: 'manual'});
+		      
+		      if (bootstrapResponse.status === 302) {
+		        const actualRdapUrl = bootstrapResponse.headers.get('Location');
+		        if (actualRdapUrl) {
+		          const rdapResponse = await fetch(actualRdapUrl);
+		          if (rdapResponse.ok) {
+		            const rdapData = await rdapResponse.json();
+		            
+		            // Add domain-specific RDAP data if available
+		            if (rdapData.objectClassName === "domain") {
+		              // Add nameservers
+		              if (rdapData.nameservers && rdapData.nameservers.length > 0) {
+		                formattedData.nameservers = rdapData.nameservers.map(ns => ns.ldhName);
+		              }
+		              
+		              // Add registrar
+		              if (rdapData.entities) {
+		                const registrar = rdapData.entities.find(e => e.roles && e.roles.includes("registrar"));
+		                if (registrar && registrar.vcardArray && registrar.vcardArray[1]) {
+		                  const vcardData = registrar.vcardArray[1];
+		                  const nameField = vcardData.find(f => f[0] === "fn");
+		                  if (nameField && nameField[3]) {
+		                    formattedData.registrar = nameField[3];
+		                  }
+		                }
+		              }
+		              
+		              // Add dates
+		              if (rdapData.events) {
+		                rdapData.events.forEach(event => {
+		                  if (event.eventAction === "registration") {
+		                    formattedData.registered = event.eventDate;
+		                  }
+		                  if (event.eventAction === "expiration") {
+		                    formattedData.expires = event.eventDate;
+		                  }
+		                  if (event.eventAction === "last changed") {
+		                    formattedData.updated = event.eventDate;
+		                  }
+		                });
+		              }
+		            }
+		            
+		            // Add IP-specific RDAP data if available
+		            if (rdapData.objectClassName === "ip network") {
+		              // Add IP range
+		              if (rdapData.startAddress && rdapData.endAddress) {
+		                formattedData.ipRange = `${rdapData.startAddress} - ${rdapData.endAddress}`;
+		              }
+		              
+		              // Add remarks
+		              if (rdapData.remarks) {
+		                const descriptions = rdapData.remarks.flatMap(r => r.description || []);
+		                if (descriptions.length > 0) {
+		                  formattedData.remarks = descriptions;
+		                }
+		              }
+		              
+		              // Add dates
+		              if (rdapData.events) {
+		                rdapData.events.forEach(event => {
+		                  if (event.eventAction === "registration") {
+		                    formattedData.registered = event.eventDate;
+		                  }
+		                  if (event.eventAction === "last changed") {
+		                    formattedData.updated = event.eventDate;
+		                  }
+		                });
+		              }
+		            }
+		          }
+		        }
+		      }
+		    } catch (rdapError) {
+		      console.error("RDAP lookup failed:", rdapError);
+		      // Continue without RDAP data
+		    }
+		    
+		    return new Response(JSON.stringify(formattedData, null, 2) + "\n", {
 		      headers: { "Content-Type": "text/plain" }
 		    });
 		  } catch (error) {
-		    return new Response("Error fetching WHOIS data\n", {
+		    console.error("Lookup error:", error);
+		    return new Response("Error fetching data\n", {
 		      status: 500, 
 		      headers: { "Content-Type": "text/plain" }
 		    });
