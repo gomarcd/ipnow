@@ -489,6 +489,31 @@ export default {
 						}
 					}
 
+					// Make search input dismiss on ESC or clicking outside
+					document.addEventListener('click', (event) => {
+					  if (!searchIcon.contains(event.target) && 
+					      !searchInputContainer.contains(event.target) && 
+					      searchInputContainer.classList.contains('expanded')) {
+					    searchInputContainer.classList.remove('expanded');
+					  }
+					});
+
+					searchInput.addEventListener('keydown', (event) => {
+					  if (event.key === 'Escape' && searchInputContainer.classList.contains('expanded')) {
+					    searchInputContainer.classList.remove('expanded');
+					  }
+					});
+
+					// Add keyboard shortcut Command+K/Ctrl+K for search
+					document.addEventListener('keydown', (event) => {
+					  // Check if Command (Mac) or Ctrl (Windows/Linux) + K is pressed
+					  if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
+					    event.preventDefault(); // Prevent browser's default behavior
+					    searchInputContainer.classList.add('expanded');
+					    searchInput.focus();
+					  }
+					});
+
 				</script>
 				</body>
 			</html>	  
