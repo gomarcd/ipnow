@@ -200,64 +200,79 @@ export default {
 
 				<body>
 					<div class="container">
-						<div class="ipcard">
-							<div class="ip" id="ip">
-								<h3>IP address</h3>
-								<span id="ipvalue">${ip}</span> 
-								<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="hidden">
-									<defs>
-										<symbol id="copyToClipboard" viewBox="0 -960 960 960">
-											<path d="M760-200H320q-33 0-56.5-23.5T240-280v-560q0-33 23.5-56.5T320-920h280l240 240v400q0 33-23.5 56.5T760-200ZM560-640v-200H320v560h440v-360H560ZM160-40q-33 0-56.5-23.5T80-120v-560h80v560h440v80H160Zm160-800v200-200 560-560Z" />
-										</symbol>
-										<symbol id="copyToClipboardCheckmark" fill="#28a745" viewBox="0 -960 960 960">
-											<path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/>
-										</symbol>
-									</defs>
+						<div class="ipcard" id="ip-card">
+						    <div class="search-container">
+						        <div class="search-input-container" id="search-input-container">
+						            <input type="text" class="search-input" id="search-input" placeholder="IP or domain...">
+						        </div>
+								<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="search-icon" id="search-icon">
+								  <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
 								</svg>
-								<svg height="24px" width="24px" fill="#5f6368">
-									<use href="#copyToClipboard"></use>
-								</svg>
-							</div>
+						    </div>
 
-							<!-- Display Provider info, if any -->
-							${(isp || asn) ? `
-							<h3>Provider</h3>
-							<p>${isp || ''} ${asn ? `ASN${asn}` : ''}</p>
-							` : ''}
+						    <div id="ip-card-content">
+						        <div class="ip" id="ip">
+						            <h3>IP address</h3>
+						            <span id="ipvalue">${ip}</span> 
+						            <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="hidden">
+						                <defs>
+						                    <symbol id="copyToClipboard" viewBox="0 -960 960 960">
+						                        <path d="M760-200H320q-33 0-56.5-23.5T240-280v-560q0-33 23.5-56.5T320-920h280l240 240v400q0 33-23.5 56.5T760-200ZM560-640v-200H320v560h440v-360H560ZM160-40q-33 0-56.5-23.5T80-120v-560h80v560h440v80H160Zm160-800v200-200 560-560Z" />
+						                    </symbol>
+						                    <symbol id="copyToClipboardCheckmark" fill="#28a745" viewBox="0 -960 960 960">
+						                        <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/>
+						                    </symbol>
+						                </defs>
+						            </svg>
+						            <svg height="24px" width="24px" fill="#5f6368">
+						                <use href="#copyToClipboard"></use>
+						            </svg>
+						        </div>
 
-							<!-- Display Location info, if any -->
-							${(city || region || country) ? `
-							<h3>Location</h3>
-							<p>${[city, region, country].filter(Boolean).join(', ')}</p>
-							` : ''}
+						        <!-- Display Provider info, if any -->
+						        ${(isp || asn) ? `
+						        <h3>Provider</h3>
+						        <p>${isp || ''} ${asn ? `ASN${asn}` : ''}</p>
+						        ` : ''}
 
-							<!-- Display Device info, if any -->
-							<div id="device-section" class="hidden">
-								<h3>Device</h3>
-								<span id="browser-info"></span>, <span id="os-info"></span><BR>
-							</div>
+						        <!-- Display Location info, if any -->
+						        ${(city || region || country) ? `
+						        <h3>Location</h3>
+						        <p>${[city, region, country].filter(Boolean).join(', ')}</p>
+						        ` : ''}
 
-							<div class="footer">
-								<div class="info" id="infobutton">
-									<span ><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
-								</div>
+						        <!-- Display Device info, if any -->
+						        <div id="device-section" class="hidden">
+						            <h3>Device</h3>
+						            <span id="browser-info"></span>, <span id="os-info"></span><BR>
+						        </div>
 
-								<div class="social-links">
-									<a href="https://github.com/gomarcd/ipnow" target="_blank" aria-label="GitHub">
-										<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3 .3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5 .3-6.2 2.3zm44.2-1.7c-2.9 .7-4.9 2.6-4.6 4.9 .3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3 .7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3 .3 2.9 2.3 3.9 1.6 1 3.6 .7 4.3-.7 .7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3 .7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3 .7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
-									</a>
-									<a href="https://plausible.io/ip.now" target="_blank" aria-label="Plausible Analytics">
-										<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60">
-											<path d="M45.2456 22.6028c-1.0911 10.4558-10.2327 18.2273-20.7453 18.2273h-4.0478v9.57c0 5.302-4.2981 9.6-9.6 9.6H3.36c-1.8557 0-3.36-1.5043-3.36-3.36V36.9346l5.0381-7.0686c.9118-1.2793 2.588-1.7567 4.037-1.1498l2.8657 1.2003c1.4445.605 3.1154.1294 4.0248-1.1455l6.7172-9.4172c.9071-1.2717 2.5744-1.7451 4.0144-1.1397l5.5199 2.3204c1.443.6066 3.1138.132 4.0223-1.1427l6.4594-9.0626c2.0248 3.5598 3.0145 7.7888 2.5468 12.2707Z"/>
-											<path d="M3.2921 28.8726c.8233-1.1551 2.0209-2.0435 3.4139-2.3114 1.0862-.2089 2.1569-.0993 3.1472.3155l2.865 1.2c.1651.0691.3389.1042.5165.1042.4366 0 .8488-.2125 1.1027-.5684l6.5942-9.2448c.8232-1.154 2.0204-2.041 3.4125-2.3083 1.0821-.2078 2.1464-.0989 3.1283.3138l5.5198 2.3204c.1666.0701.3418.1055.5207.1055.4352 0 .8456-.2114 1.098-.5654l6.9193-9.7078C37.8272 3.3644 31.7802 0 24.945 0H3.36C1.5043 0 0 1.5043 0 3.36v30.1317l3.2921-4.619Z"/>
-										</svg>
-									</a>							
-									<a href="https://buymeacoffee.com/gomarcd" target="_blank" aria-label="Buy me a coffee">
-										<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M127.1 146.5c1.3 7.7 8 13.5 16 13.5h16.5c9.8 0 17.6-8.5 16.3-18-3.8-28.2-16.4-54.2-36.6-74.7-14.4-14.7-23.6-33.3-26.4-53.5C111.8 5.9 105 0 96.8 0H80.4C70.6 0 63 8.5 64.1 18c3.9 31.9 18 61.3 40.6 84.4 12 12.2 19.7 27.5 22.4 44.1zm112 0c1.3 7.7 8 13.5 16 13.5h16.5c9.8 0 17.6-8.5 16.3-18-3.8-28.2-16.4-54.2-36.6-74.7-14.4-14.7-23.6-33.3-26.4-53.5C223.8 5.9 217 0 208.8 0h-16.4c-9.8 0-17.5 8.5-16.3 18 3.9 31.9 18 61.3 40.6 84.4 12 12.2 19.7 27.5 22.4 44.1zM400 192H32c-17.7 0-32 14.3-32 32v192c0 53 43 96 96 96h192c53 0 96-43 96-96h16c61.8 0 112-50.2 112-112s-50.2-112-112-112zm0 160h-16v-96h16c26.5 0 48 21.5 48 48s-21.5 48-48 48z"/></svg>
-									</a>
-								</div>
-							</div>
+						        <div class="footer">
+						            <div class="info" id="infobutton">
+						                <span><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
+						                </span>
+						            </div>
+
+						            <div class="social-links">
+						                <a href="https://github.com/gomarcd/ipnow" target="_blank" aria-label="GitHub">
+						                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3 .3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5 .3-6.2 2.3zm44.2-1.7c-2.9 .7-4.9 2.6-4.6 4.9 .3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3 .7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3 .3 2.9 2.3 3.9 1.6 1 3.6 .7 4.3-.7 .7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3 .7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3 .7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+						                </a>
+						                <a href="https://plausible.io/ip.now" target="_blank" aria-label="Plausible Analytics">
+						                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60">
+						                        <path d="M45.2456 22.6028c-1.0911 10.4558-10.2327 18.2273-20.7453 18.2273h-4.0478v9.57c0 5.302-4.2981 9.6-9.6 9.6H3.36c-1.8557 0-3.36-1.5043-3.36-3.36V36.9346l5.0381-7.0686c.9118-1.2793 2.588-1.7567 4.037-1.1498l2.8657 1.2003c1.4445.605 3.1154.1294 4.0248-1.1455l6.7172-9.4172c.9071-1.2717 2.5744-1.7451 4.0144-1.1397l5.5199 2.3204c1.443.6066 3.1138.132 4.0223-1.1427l6.4594-9.0626c2.0248 3.5598 3.0145 7.7888 2.5468 12.2707Z"/>
+						                        <path d="M3.2921 28.8726c.8233-1.1551 2.0209-2.0435 3.4139-2.3114 1.0862-.2089 2.1569-.0993 3.1472.3155l2.865 1.2c.1651.0691.3389.1042.5165.1042.4366 0 .8488-.2125 1.1027-.5684l6.5942-9.2448c.8232-1.154 2.0204-2.041 3.4125-2.3083 1.0821-.2078 2.1464-.0989 3.1283.3138l5.5198 2.3204c.1666.0701.3418.1055.5207.1055.4352 0 .8456-.2114 1.098-.5654l6.9193-9.7078C37.8272 3.3644 31.7802 0 24.945 0H3.36C1.5043 0 0 1.5043 0 3.36v30.1317l3.2921-4.619Z"/>
+						                    </svg>
+						                </a>							
+						                <a href="https://buymeacoffee.com/gomarcd" target="_blank" aria-label="Buy me a coffee">
+						                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M127.1 146.5c1.3 7.7 8 13.5 16 13.5h16.5c9.8 0 17.6-8.5 16.3-18-3.8-28.2-16.4-54.2-36.6-74.7-14.4-14.7-23.6-33.3-26.4-53.5C111.8 5.9 105 0 96.8 0H80.4C70.6 0 63 8.5 64.1 18c3.9 31.9 18 61.3 40.6 84.4 12 12.2 19.7 27.5 22.4 44.1zm112 0c1.3 7.7 8 13.5 16 13.5h16.5c9.8 0 17.6-8.5 16.3-18-3.8-28.2-16.4-54.2-36.6-74.7-14.4-14.7-23.6-33.3-26.4-53.5C223.8 5.9 217 0 208.8 0h-16.4c-9.8 0-17.5 8.5-16.3 18 3.9 31.9 18 61.3 40.6 84.4 12 12.2 19.7 27.5 22.4 44.1zM400 192H32c-17.7 0-32 14.3-32 32v192c0 53 43 96 96 96h192c53 0 96-43 96-96h16c61.8 0 112-50.2 112-112s-50.2-112-112-112zm0 160h-16v-96h16c26.5 0 48 21.5 48 48s-21.5 48-48 48z"/></svg>
+						                </a>
+						            </div>
+						        </div>
+						    </div>
+						    
 						</div>
+
+
 						<div class="notification" id="notification">
 						Copied to clipboard!
 						</div>
@@ -423,6 +438,58 @@ export default {
 							toggleModal();
 						}
 					});
+
+
+				const searchIcon = document.getElementById('search-icon');
+				const searchInputContainer = document.getElementById('search-input-container');
+				const searchInput = document.getElementById('search-input');
+				const infomodalBackground = document.getElementById('infomodalBackground');
+				const curltext = document.getElementById('curltext');
+
+				searchIcon.addEventListener('click', () => {
+				    searchInputContainer.classList.toggle('expanded');
+				    if (searchInputContainer.classList.contains('expanded')) {
+				        searchInput.focus();
+				    }
+				});
+
+				searchInput.addEventListener('keypress', async (event) => {
+				    if (event.key === 'Enter') {
+				        const query = searchInput.value.trim();
+				        if (query) {
+				            searchForIpOrDomain(query);
+				        }
+				    }
+				});
+
+				async function searchForIpOrDomain(query) {
+				    try {
+				        curltext.textContent = 'Loading...';
+				        infomodalBackground.style.display = 'flex';
+				        
+				        const response = await fetch('/' + encodeURIComponent(query));
+				        
+				        if (!response.ok) {
+				            throw new Error('Failed to fetch data');
+				        }
+				        
+				        const data = await response.text();
+				        
+				        try {
+				            // Try to parse as JSON for formatted display
+				            const jsonData = JSON.parse(data);
+				            curltext.textContent = JSON.stringify(jsonData, null, 2);
+				        } catch (e) {
+				            // If not valid JSON, display as plain text
+				            curltext.textContent = data;
+				        }
+				        
+				    } catch (error) {
+				        curltext.textContent = 'Error: ' + error.message;
+				    }
+				}
+
+
 				</script>
 				</body>
 			</html>	  
