@@ -80,93 +80,226 @@ export default {
 		      as: whoisData.as
 		    };
 		    
-		    // Then try to get RDAP data
-		    try {
-		      // Determine if it's an IP or domain for RDAP lookup
-		      const rdapBootstrapUrl = /^\d+\.\d+\.\d+\.\d+$/.test(target) ? 
-		        `https://rdap.org/ip/${target}` : 
-		        `https://rdap.org/domain/${target}`;
-		      
-		      // Get the redirect from RDAP bootstrap service
-		      const bootstrapResponse = await fetch(rdapBootstrapUrl, {redirect: 'manual'});
-		      
-		      if (bootstrapResponse.status === 302) {
-		        const actualRdapUrl = bootstrapResponse.headers.get('Location');
-		        if (actualRdapUrl) {
-		          const rdapResponse = await fetch(actualRdapUrl);
-		          if (rdapResponse.ok) {
-		            const rdapData = await rdapResponse.json();
-		            
-		            // Add domain-specific RDAP data if available
-		            if (rdapData.objectClassName === "domain") {
-		              // Add nameservers
-		              if (rdapData.nameservers && rdapData.nameservers.length > 0) {
-		                formattedData.nameservers = rdapData.nameservers.map(ns => ns.ldhName);
-		              }
-		              
-		              // Add registrar
-		              if (rdapData.entities) {
-		                const registrar = rdapData.entities.find(e => e.roles && e.roles.includes("registrar"));
-		                if (registrar && registrar.vcardArray && registrar.vcardArray[1]) {
-		                  const vcardData = registrar.vcardArray[1];
-		                  const nameField = vcardData.find(f => f[0] === "fn");
-		                  if (nameField && nameField[3]) {
-		                    formattedData.registrar = nameField[3];
-		                  }
-		                }
-		              }
-		              
-		              // Add dates
-		              if (rdapData.events) {
-		                rdapData.events.forEach(event => {
-		                  if (event.eventAction === "registration") {
-		                    formattedData.registered = event.eventDate;
-		                  }
-		                  if (event.eventAction === "expiration") {
-		                    formattedData.expires = event.eventDate;
-		                  }
-		                  if (event.eventAction === "last changed") {
-		                    formattedData.updated = event.eventDate;
-		                  }
-		                });
-		              }
-		            }
-		            
-		            // Add IP-specific RDAP data if available
-		            if (rdapData.objectClassName === "ip network") {
-		              // Add IP range
-		              if (rdapData.startAddress && rdapData.endAddress) {
-		                formattedData.ipRange = `${rdapData.startAddress} - ${rdapData.endAddress}`;
-		              }
-		              
-		              // Add remarks
-		              if (rdapData.remarks) {
-		                const descriptions = rdapData.remarks.flatMap(r => r.description || []);
-		                if (descriptions.length > 0) {
-		                  formattedData.remarks = descriptions;
-		                }
-		              }
-		              
-		              // Add dates
-		              if (rdapData.events) {
-		                rdapData.events.forEach(event => {
-		                  if (event.eventAction === "registration") {
-		                    formattedData.registered = event.eventDate;
-		                  }
-		                  if (event.eventAction === "last changed") {
-		                    formattedData.updated = event.eventDate;
-		                  }
-		                });
-		              }
-		            }
-		          }
-		        }
-		      }
-		    } catch (rdapError) {
-		      console.error("RDAP lookup failed:", rdapError);
-		      // Continue without RDAP data
-		    }
-		    
+					// Then try to get RDAP data
+					try {
+					  // Determine if it's an IP or domain for RDAP lookup
+					  const rdapBootstrapUrl = /^\d+\.\d+\.\d+\.\d+$/.test(target) ? 
+					    `https://rdap.org/ip/${target}` : 
+					    `https://rdap.org/domain/${target}`;
+					  
+					  // Get the redirect from RDAP bootstrap service
+					  const bootstrapResponse = await fetch(rdapBootstrapUrl, {redirect: 'manual'});
+					  
+					  if (bootstrapResponse.status === 302) {
+					    const actualRdapUrl = bootstrapResponse.headers.get('Location');
+					    if (actualRdapUrl) {
+					      const rdapResponse = await fetch(actualRdapUrl);
+					      if (rdapResponse.ok) {
+					        const rdapData = await rdapResponse.json();
+					        
+					        // Add domain-specific RDAP data if available
+					        if (rdapData.objectClassName === "domain") {
+					          // Add nameservers
+					          if (rdapData.nameservers && rdapData.nameservers.length > 0) {
+					            formattedData.nameservers = rdapData.nameservers.map(ns => ns.ldhName);
+					          }
+					          
+					          // Add dates
+					          if (rdapData.events) {
+					            rdapData.events.forEach(event => {
+					              if (event.eventAction === "registration") {
+					                formattedData.registered = event.eventDate;
+					              }
+					              if (event.eventAction === "expiration") {
+					                formattedData.expires = event.eventDate;
+					              }
+					              if (event.eventAction === "last changed") {
+					                formattedData.updated = event.eventDate;
+					              }
+					            });
+					          }
+					          
+					          // Process entities
+					          if (rdapData.entities && rdapData.entities.length > 0) {
+					            // Find registrar entity
+					            const registrarEntity = rdapData.entities.find(e => e.roles && e.roles.includes("registrar"));
+					            if (registrarEntity) {
+					              // Extract registrar name
+					              if (registrarEntity.vcardArray && registrarEntity.vcardArray[1]) {
+					                const vcardData = registrarEntity.vcardArray[1];
+					                const nameField = vcardData.find(f => f[0] === "fn");
+					                if (nameField && nameField[3]) {
+					                  formattedData.registrar = nameField[3];
+					                }
+					              }
+					              
+					              // Look for abuse contact within registrar entity
+					              if (registrarEntity.entities && registrarEntity.entities.length > 0) {
+					                const abuseEntity = registrarEntity.entities.find(e => e.roles && e.roles.includes("abuse"));
+					                if (abuseEntity && abuseEntity.vcardArray && abuseEntity.vcardArray[1]) {
+					                  const vcardData = abuseEntity.vcardArray[1];
+					                  
+					                  formattedData.abuseContact = {};
+					                  
+					                  // Extract name
+					                  const nameField = vcardData.find(f => f[0] === "fn");
+					                  if (nameField && nameField[3]) {
+					                    formattedData.abuseContact.name = nameField[3];
+					                  }
+					                  
+					                  // Extract email
+					                  const emailField = vcardData.find(f => f[0] === "email");
+					                  if (emailField && emailField[3]) {
+					                    formattedData.abuseContact.email = emailField[3];
+					                  }
+					                  
+					                  // Extract phone
+					                  const telField = vcardData.find(f => f[0] === "tel");
+					                  if (telField && telField[3]) {
+					                    formattedData.abuseContact.phone = telField[3].replace('tel:', '');
+					                  }
+					                }
+					              }
+					            }
+					            
+					            // Look for registrant information at top level
+					            const registrantEntity = rdapData.entities.find(e => e.roles && e.roles.includes("registrant"));
+					            if (registrantEntity && registrantEntity.vcardArray && registrantEntity.vcardArray[1]) {
+					              const vcardData = registrantEntity.vcardArray[1];
+					              
+					              formattedData.registrant = {};
+					              
+					              // Extract name
+					              const nameField = vcardData.find(f => f[0] === "fn");
+					              if (nameField && nameField[3]) {
+					                formattedData.registrant.name = nameField[3];
+					              }
+					              
+					              // Extract email
+					              const emailField = vcardData.find(f => f[0] === "email");
+					              if (emailField && emailField[3]) {
+					                formattedData.registrant.email = emailField[3];
+					              }
+					              
+					              // Extract phone
+					              const telField = vcardData.find(f => f[0] === "tel" && f[1].type === "voice");
+					              if (telField && telField[3]) {
+					                formattedData.registrant.phone = telField[3];
+					              }
+					              
+					              // Extract address
+					              const adrField = vcardData.find(f => f[0] === "adr");
+					              if (adrField && adrField[1].label) {
+					                formattedData.registrant.address = adrField[1].label;
+					              }
+					            }
+					          }
+					        }
+					        
+					        // Add IP-specific RDAP data if available
+					        if (rdapData.objectClassName === "ip network") {
+					          // Add IP range
+					          if (rdapData.startAddress && rdapData.endAddress) {
+					            formattedData.ipRange = `${rdapData.startAddress} - ${rdapData.endAddress}`;
+					          }
+					          
+					          // Add remarks
+					          if (rdapData.remarks) {
+					            const descriptions = rdapData.remarks.flatMap(r => r.description || []);
+					            if (descriptions.length > 0) {
+					              formattedData.remarks = descriptions;
+					            }
+					          }
+					          
+					          // Add dates
+					          if (rdapData.events) {
+					            rdapData.events.forEach(event => {
+					              if (event.eventAction === "registration") {
+					                formattedData.registered = event.eventDate;
+					              }
+					              if (event.eventAction === "last changed") {
+					                formattedData.updated = event.eventDate;
+					              }
+					            });
+					          }
+					          
+					          // Add registrant and abuse contact information
+					          if (rdapData.entities && rdapData.entities.length > 0) {
+					            // Extract registrant information
+					            const registrant = rdapData.entities.find(e => e.roles && e.roles.includes("registrant"));
+					            if (registrant && registrant.vcardArray && registrant.vcardArray[1]) {
+					              const vcardData = registrant.vcardArray[1];
+					              
+					              // Extract name
+					              const nameField = vcardData.find(f => f[0] === "fn");
+					              if (nameField && nameField[3]) {
+					                formattedData.registrant = {
+					                  name: nameField[3]
+					                };
+					                
+					                // Extract email if available
+					                const emailField = vcardData.find(f => f[0] === "email");
+					                if (emailField && emailField[3]) {
+					                  formattedData.registrant.email = emailField[3];
+					                }
+					                
+					                // Extract phone if available
+					                const telField = vcardData.find(f => f[0] === "tel" && f[1].type === "voice");
+					                if (telField && telField[3]) {
+					                  formattedData.registrant.phone = telField[3];
+					                }
+					                
+					                // Extract address if available
+					                const adrField = vcardData.find(f => f[0] === "adr");
+					                if (adrField && adrField[1].label) {
+					                  formattedData.registrant.address = adrField[1].label;
+					                }
+					              }
+					            }
+					            
+					            // Extract abuse contact information
+					            const abuseContact = rdapData.entities.find(e => e.roles && e.roles.includes("abuse"));
+					            if (abuseContact && abuseContact.vcardArray && abuseContact.vcardArray[1]) {
+					              const vcardData = abuseContact.vcardArray[1];
+					              
+					              // Extract name
+					              const nameField = vcardData.find(f => f[0] === "fn");
+					              if (nameField && nameField[3]) {
+					                formattedData.abuseContact = {
+					                  name: nameField[3]
+					                };
+					                
+					                // Extract email if available
+					                const emailField = vcardData.find(f => f[0] === "email");
+					                if (emailField && emailField[3]) {
+					                  formattedData.abuseContact.email = emailField[3];
+					                }
+					                
+					                // Extract phone if available
+					                const telField = vcardData.find(f => f[0] === "tel" && f[1].type === "voice");
+					                if (telField && telField[3]) {
+					                  formattedData.abuseContact.phone = telField[3];
+					                }
+					                
+					                // Extract address if available
+					                const adrField = vcardData.find(f => f[0] === "adr");
+					                if (adrField && adrField[1].label) {
+					                  formattedData.abuseContact.address = adrField[1].label;
+					                }
+					              }
+					            }
+					          }
+					        }
+					      }
+					    }
+					  }
+					} catch (rdapError) {
+					  console.error("RDAP lookup failed:", rdapError);
+					  // Continue without RDAP data
+					}
+
+
+
 		    return new Response(JSON.stringify(formattedData, null, 2) + "\n", {
 		      headers: { "Content-Type": "text/plain" }
 		    });
