@@ -591,6 +591,7 @@ export default {
 									copyToClipboardIcon.parentNode.setAttribute('fill', '#5f6368');
 								}, 1500);						
 						});
+					}
 
 					function toggleModal() {
 						const modalBackground = document.getElementById("infomodalBackground");
