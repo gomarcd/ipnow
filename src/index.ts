@@ -31,13 +31,11 @@ export default {
 
 		const details = { ip, isp, asn, location, latitude, longitude, datacenter, userAgent, timezone, tlscipher };
 
-		// Redirect HTTP to HTTPS
 		if (url.protocol === "http:" && !userAgent.includes("curl") && !url.hostname.includes("localhost")) {
 			const httpsUrl = url.href.replace("http:", "https:");
 			return Response.redirect(httpsUrl, 301);
 		}
 
-		// Handle specific routes with custom responses
 		if (url.pathname === "/robots.txt") {
 			const robotsTxt = `
 				User-agent: *
@@ -48,8 +46,6 @@ export default {
 			});
 		}
 
-		// Replace the Direct IP/d// Replace the Direct IP/domain lookup section with this implementation
-		// Direct IP/domain lookup - Must come before 404 handler
 		if (url.pathname.length > 1 && (
 		    /^\/\d+\.\d+\.\d+\.\d+$/.test(url.pathname) || // IPv4
 		    /^\/[a-zA-Z0-9][a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/.test(url.pathname) || // Domain
@@ -58,11 +54,9 @@ export default {
 		  const target = url.pathname.substring(1);
 		  
 		  try {
-		    // First get basic IP data from ip-api
 		    const whoisResponse = await fetch(`http://ip-api.com/json/${target}?fields=status,message,country,countryCode,region,regionName,city,zip,lat,lon,timezone,isp,org,as,query,reverse,mobile,proxy,hosting`);
 		    const whoisData = await whoisResponse.json();
 		    
-		    // Create the formatted output object with the basic data
 		    const formattedData = {
 		      query: whoisData.query || target,
 		      status: whoisData.status,
@@ -79,15 +73,15 @@ export default {
 		      org: whoisData.org,
 		      as: whoisData.as
 		    };
-		    
-					// Then try to get RDAP data
+
+			if (whoisData.reverse) {
+			  formattedData.hostname = whoisData.reverse;
+			}		    
 					try {
-					  // Determine if it's an IP or domain for RDAP lookup
 					  const rdapBootstrapUrl = /^\d+\.\d+\.\d+\.\d+$/.test(target) ? 
 					    `https://rdap.org/ip/${target}` : 
 					    `https://rdap.org/domain/${target}`;
 					  
-					  // Get the redirect from RDAP bootstrap service
 					  const bootstrapResponse = await fetch(rdapBootstrapUrl, {redirect: 'manual'});
 					  
 					  if (bootstrapResponse.status === 302) {
@@ -97,14 +91,10 @@ export default {
 					      if (rdapResponse.ok) {
 					        const rdapData = await rdapResponse.json();
 					        
-					        // Add domain-specific RDAP data if available
 					        if (rdapData.objectClassName === "domain") {
-					          // Add nameservers
 					          if (rdapData.nameservers && rdapData.nameservers.length > 0) {
 					            formattedData.nameservers = rdapData.nameservers.map(ns => ns.ldhName);
 					          }
-					          
-					          // Add dates
 					          if (rdapData.events) {
 					            rdapData.events.forEach(event => {
 					              if (event.eventAction === "registration") {
@@ -118,13 +108,9 @@ export default {
 					              }
 					            });
 					          }
-					          
-					          // Process entities
 					          if (rdapData.entities && rdapData.entities.length > 0) {
-					            // Find registrar entity
 					            const registrarEntity = rdapData.entities.find(e => e.roles && e.roles.includes("registrar"));
 					            if (registrarEntity) {
-					              // Extract registrar name
 					              if (registrarEntity.vcardArray && registrarEntity.vcardArray[1]) {
 					                const vcardData = registrarEntity.vcardArray[1];
 					                const nameField = vcardData.find(f => f[0] === "fn");
@@ -133,7 +119,6 @@ export default {
 					                }
 					              }
 					              
-					              // Look for abuse contact within registrar entity
 					              if (registrarEntity.entities && registrarEntity.entities.length > 0) {
 					                const abuseEntity = registrarEntity.entities.find(e => e.roles && e.roles.includes("abuse"));
 					                if (abuseEntity && abuseEntity.vcardArray && abuseEntity.vcardArray[1]) {
@@ -141,19 +126,16 @@ export default {
 					                  
 					                  formattedData.abuseContact = {};
 					                  
-					                  // Extract name
 					                  const nameField = vcardData.find(f => f[0] === "fn");
 					                  if (nameField && nameField[3]) {
 					                    formattedData.abuseContact.name = nameField[3];
 					                  }
 					                  
-					                  // Extract email
 					                  const emailField = vcardData.find(f => f[0] === "email");
 					                  if (emailField && emailField[3]) {
 					                    formattedData.abuseContact.email = emailField[3];
 					                  }
 					                  
-					                  // Extract phone
 					                  const telField = vcardData.find(f => f[0] === "tel");
 					                  if (telField && telField[3]) {
 					                    formattedData.abuseContact.phone = telField[3].replace('tel:', '');
@@ -162,32 +144,27 @@ export default {
 					              }
 					            }
 					            
-					            // Look for registrant information at top level
 					            const registrantEntity = rdapData.entities.find(e => e.roles && e.roles.includes("registrant"));
 					            if (registrantEntity && registrantEntity.vcardArray && registrantEntity.vcardArray[1]) {
 					              const vcardData = registrantEntity.vcardArray[1];
 					              
 					              formattedData.registrant = {};
 					              
-					              // Extract name
 					              const nameField = vcardData.find(f => f[0] === "fn");
 					              if (nameField && nameField[3]) {
 					                formattedData.registrant.name = nameField[3];
 					              }
 					              
-					              // Extract email
 					              const emailField = vcardData.find(f => f[0] === "email");
 					              if (emailField && emailField[3]) {
 					                formattedData.registrant.email = emailField[3];
 					              }
 					              
-					              // Extract phone
 					              const telField = vcardData.find(f => f[0] === "tel" && f[1].type === "voice");
 					              if (telField && telField[3]) {
 					                formattedData.registrant.phone = telField[3];
 					              }
 					              
-					              // Extract address
 					              const adrField = vcardData.find(f => f[0] === "adr");
 					              if (adrField && adrField[1].label) {
 					                formattedData.registrant.address = adrField[1].label;
@@ -196,14 +173,11 @@ export default {
 					          }
 					        }
 					        
-					        // Add IP-specific RDAP data if available
 					        if (rdapData.objectClassName === "ip network") {
-					          // Add IP range
 					          if (rdapData.startAddress && rdapData.endAddress) {
 					            formattedData.ipRange = `${rdapData.startAddress} - ${rdapData.endAddress}`;
 					          }
 					          
-					          // Add remarks
 					          if (rdapData.remarks) {
 					            const descriptions = rdapData.remarks.flatMap(r => r.description || []);
 					            if (descriptions.length > 0) {
@@ -211,7 +185,6 @@ export default {
 					            }
 					          }
 					          
-					          // Add dates
 					          if (rdapData.events) {
 					            rdapData.events.forEach(event => {
 					              if (event.eventAction === "registration") {
@@ -223,33 +196,27 @@ export default {
 					            });
 					          }
 					          
-					          // Add registrant and abuse contact information
 					          if (rdapData.entities && rdapData.entities.length > 0) {
-					            // Extract registrant information
 					            const registrant = rdapData.entities.find(e => e.roles && e.roles.includes("registrant"));
 					            if (registrant && registrant.vcardArray && registrant.vcardArray[1]) {
 					              const vcardData = registrant.vcardArray[1];
 					              
-					              // Extract name
 					              const nameField = vcardData.find(f => f[0] === "fn");
 					              if (nameField && nameField[3]) {
 					                formattedData.registrant = {
 					                  name: nameField[3]
 					                };
 					                
-					                // Extract email if available
 					                const emailField = vcardData.find(f => f[0] === "email");
 					                if (emailField && emailField[3]) {
 					                  formattedData.registrant.email = emailField[3];
 					                }
 					                
-					                // Extract phone if available
 					                const telField = vcardData.find(f => f[0] === "tel" && f[1].type === "voice");
 					                if (telField && telField[3]) {
 					                  formattedData.registrant.phone = telField[3];
 					                }
 					                
-					                // Extract address if available
 					                const adrField = vcardData.find(f => f[0] === "adr");
 					                if (adrField && adrField[1].label) {
 					                  formattedData.registrant.address = adrField[1].label;
@@ -257,31 +224,26 @@ export default {
 					              }
 					            }
 					            
-					            // Extract abuse contact information
 					            const abuseContact = rdapData.entities.find(e => e.roles && e.roles.includes("abuse"));
 					            if (abuseContact && abuseContact.vcardArray && abuseContact.vcardArray[1]) {
 					              const vcardData = abuseContact.vcardArray[1];
 					              
-					              // Extract name
 					              const nameField = vcardData.find(f => f[0] === "fn");
 					              if (nameField && nameField[3]) {
 					                formattedData.abuseContact = {
 					                  name: nameField[3]
 					                };
 					                
-					                // Extract email if available
 					                const emailField = vcardData.find(f => f[0] === "email");
 					                if (emailField && emailField[3]) {
 					                  formattedData.abuseContact.email = emailField[3];
 					                }
 					                
-					                // Extract phone if available
 					                const telField = vcardData.find(f => f[0] === "tel" && f[1].type === "voice");
 					                if (telField && telField[3]) {
 					                  formattedData.abuseContact.phone = telField[3];
 					                }
 					                
-					                // Extract address if available
 					                const adrField = vcardData.find(f => f[0] === "adr");
 					                if (adrField && adrField[1].label) {
 					                  formattedData.abuseContact.address = adrField[1].label;
@@ -295,7 +257,6 @@ export default {
 					  }
 					} catch (rdapError) {
 					  console.error("RDAP lookup failed:", rdapError);
-					  // Continue without RDAP data
 					}
 
 
@@ -312,29 +273,23 @@ export default {
 		  }
 		}
 
-		// WHOIS FUNCTIONALITY - Handle /whois routes
 		if (url.pathname.startsWith("/whois")) {
-			// Extract IP from path
 			let targetIp = "";
 			
-			// Check for /whois/1.2.3.4 pattern
 			const ipPathMatch = url.pathname.match(/^\/whois\/([0-9.]+)$/);
 			if (ipPathMatch && ipPathMatch[1]) {
 				targetIp = ipPathMatch[1];
 				console.log("Found IP in path:", targetIp);
 			} else {
-				// Check for IP in query param 
 				targetIp = url.searchParams.get("ip") || ip;
 				console.log("Using IP from param or visitor:", targetIp);
 			}
 			
 			try {
-				// Fetch WHOIS data from ip-api.com
 				console.log("Fetching data for:", targetIp);
 				const whoisResponse = await fetch(`http://ip-api.com/json/${targetIp}`);
 				const whoisData = await whoisResponse.json();
 				
-				// Return plain text response for all requests
 				return new Response(JSON.stringify(whoisData, null, 2) + "\n", {
 					headers: { "Content-Type": "text/plain" },
 				});
@@ -371,7 +326,6 @@ export default {
 			});
 		}
 				
-		// Handle valid curl requests
 		if (
 			(url.pathname === "/" || url.pathname === "/details") &&
 			(userAgent.toLowerCase().includes("curl") ||
@@ -385,7 +339,6 @@ export default {
 			});
 		}
 
-		// Handle unmatched routes for curl-like requests
 		if (
 			userAgent.toLowerCase().includes("curl") ||
 			userAgent.toLowerCase().includes("wget") ||
@@ -397,7 +350,6 @@ export default {
 			});
 		}
 
-		// For Bing verification file
 		if (url.pathname === "/b65bf7dc1b0348b587fa70578b445f59.txt") {
 			return new Response("b65bf7dc1b0348b587fa70578b445f59", {
 				headers: { "Content-Type": "text/plain", "Cache-Control": "max-age=3600" },
@@ -468,19 +420,16 @@ export default {
 								</svg>
 							</div>
 
-							<!-- Display Provider info, if any -->
 							${(isp || asn) ? `
 							<h3>Provider</h3>
 							<p>${isp || ''} ${asn ? `ASN${asn}` : ''}</p>
 							` : ''}
 
-							<!-- Display Location info, if any -->
 							${(city || region || country) ? `
 							<h3>Location</h3>
 							<p>${[city, region, country].filter(Boolean).join(', ')}</p>
 							` : ''}
 
-							<!-- Display Device info, if any -->
 							<div id="device-section" class="hidden">
 								<h3>Device</h3>
 								<span id="browser-info"></span>, <span id="os-info"></span><BR>
@@ -579,8 +528,6 @@ export default {
 								platform = "Linux";
 							}
 						}
-
-						// Browser detection
 						const userAgent = navigator.userAgent;
 
 						if (navigator.brave) {
@@ -594,7 +541,7 @@ export default {
 							} else if (userAgent.includes("Brave")) {
 								browser = "Brave";
 							} else {
-								browser = "Safari"; // Default for all WebKit browsers on iOS
+								browser = "Safari";
 							}
 						} else if (navigator.userAgentData?.brands) {
 							const brands = navigator.userAgentData.brands.map(b => b.brand);
@@ -644,7 +591,6 @@ export default {
 									copyToClipboardIcon.parentNode.setAttribute('fill', '#5f6368');
 								}, 1500);						
 						});
-}
 
 					function toggleModal() {
 						const modalBackground = document.getElementById("infomodalBackground");
@@ -655,30 +601,24 @@ export default {
 						}
 					}
 
-					// Close modal if user clicks outside of it (works on desktop)
 					window.onclick = function(event) {
 						const modalBackground = document.getElementById('infomodalBackground');
 						if (event.target === modalBackground) {
 							toggleModal();
 						}
 					}
-					// Close modal if user taps outside of it (for mobile)
 					window.ontouchstart = function(event) {
 						const modalBackground = document.getElementById('infomodalBackground');
 						if (event.target === modalBackground) {
 							toggleModal();
 						}
 					}
-					// Close modal if user presses ESC
 					window.addEventListener("keydown", function(event) {
 						const modalBackground = document.getElementById("infomodalBackground");
 						if (event.key === "Escape" && modalBackground.style.display === "flex") {
 							toggleModal();
 						}
 					});
-
-
-					// Search functionality
 					const searchIcon = document.getElementById('search-icon');
 					const searchInputContainer = document.getElementById('search-input-container');
 					const searchInput = document.getElementById('search-input');
@@ -728,8 +668,6 @@ export default {
 							curltext.textContent = 'Error: ' + error.message;
 						}
 					}
-
-					// Make search input dismiss on ESC or clicking outside
 					document.addEventListener('click', (event) => {
 					  if (!searchIcon.contains(event.target) && 
 					      !searchInputContainer.contains(event.target) && 
@@ -737,14 +675,11 @@ export default {
 					    searchInputContainer.classList.remove('expanded');
 					  }
 					});
-
 					searchInput.addEventListener('keydown', (event) => {
 					  if (event.key === 'Escape' && searchInputContainer.classList.contains('expanded')) {
 					    searchInputContainer.classList.remove('expanded');
 					  }
 					});
-
-					// Add keyboard shortcut Command+K/Ctrl+K for search
 					document.addEventListener('keydown', (event) => {
 					  // Check if Command (Mac) or Ctrl (Windows/Linux) + K is pressed
 					  if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
@@ -753,14 +688,12 @@ export default {
 					    searchInput.focus();
 					  }
 					});
-
 				</script>
 				</body>
 			</html>	  
 		`;
 
-		// If the asset or route doesn't exist, serve a 404 page
-		const notFoundResponse = /* html */`
+		const notFoundResponse = `
 			<!DOCTYPE html>
 			<html lang="en">
 			<head>
@@ -836,4 +769,4 @@ export default {
            }
          });
    }
-};							
+};
